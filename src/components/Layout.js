@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom"
 import styled, { css } from "reshadow/macro"
 
 import logo from "assets/logo.svg"
+import { Icon } from "components"
 
 const styles = css`
   layout {
@@ -21,6 +22,7 @@ const styles = css`
     display: inherit;
     grid-row-gap: 24px;
     align-content: start;
+    overflow-y: scroll;
   }
 
   nav {
@@ -65,6 +67,10 @@ const navlink = css`
     }
   }
 
+  Icon {
+    margin-right: 12px;
+  }
+
   .active {
     color: #189ee9;
     background: rgba(0, 194, 255, 0.15);
@@ -89,12 +95,15 @@ export const Layout = ({ children }) => {
         </logo>
         <nav>
           <NavLink to="/tasks#Executing" activeClassName={navlink.active}>
+            <Icon type="task" />
             Задачи
           </NavLink>
           <NavLink to="/objects" activeClassName={navlink.active}>
+            <Icon type="object" />
             Объекты
           </NavLink>
           <NavLink to="/settings" activeClassName={navlink.active}>
+            <Icon type="company" />
             Профиль компании
           </NavLink>
           <NavLink to="/login" activeClassName={navlink.active}>

@@ -1,1 +1,6 @@
 export * from "./Layout"
+export * from "./Icon"
+export * from "./Device"
+export * from "./Timeline"
+export * from "./TasksHeader"
+export * from "./Stages"

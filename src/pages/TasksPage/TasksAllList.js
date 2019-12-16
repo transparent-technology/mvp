@@ -1,12 +1,23 @@
 import React from "react"
 import styled, { use, css } from "reshadow/macro"
+import { useHistory } from "react-router-dom"
 
-import {ReactComponent as MapIcon} from 'assets/icons/map.svg'
+import { Icon, Device, Timeline } from "components"
 
 export const TasksAllList = ({ items = [] }) => {
+  const { push } = useHistory()
+  if (!items.length) return "empty"
+
+  console.log(items)
   return (
     <ul>
-      <TasksAllListItem />
+      {items.map(item => (
+        <TasksAllListItem
+          key={item.id}
+          onClick={() => push(`/tasks/${item.id}`, item)}
+          {...item}
+        />
+      ))}
     </ul>
   )
 }
@@ -16,6 +27,9 @@ const tasksItemStyle = css`
     padding: 24px 0;
     border-bottom: 1px solid #d9d9d9;
     cursor: pointer;
+    font-size: 12px;
+    display: grid;
+    grid-row-gap: 8px;
 
     &:hover h4 {
       color: #189ee9;
@@ -25,59 +39,71 @@ const tasksItemStyle = css`
   row {
     display: flex;
     align-items: center;
-    & > *:not(last-child) {
+    & > *:not(:last-child) {
       margin-right: 16px;
+    }
+
+    & h4 {
+      margin-right: auto;
     }
   }
 
   rowitem {
     display: inherit;
     align-items: inherit;
-    & > *:not(last-child) {
-      margin-right: 8px;
-    }
 
     &[|push] {
       margin-right: auto;
     }
   }
-  i {
-    margin-right: 8px;
+
+  rowitem[|caption] {
+    color: rgba(39, 47, 90, 0.45);
   }
-  h4 {
-    margin-right: auto;
+
+  Icon {
+    margin-right: 8px;
   }
 `
 
-const TasksAllListItem = () => {
+const TasksAllListItem = ({
+  id,
+  name,
+  device,
+  creationTime,
+  expectedCompletionTime,
+  closingTime,
+  address,
+  perpetrator,
+  isResponsible,
+  currentStage,
+  onClick
+}) => {
   return styled(tasksItemStyle)(
-    <listitem as="li">
+    <listitem as="li" onClick={onClick}>
+      <Timeline finish={expectedCompletionTime} start={creationTime} />
       <row>
-        <h4>hello</h4>
-        hello
+        <h4>{currentStage.name}</h4>
+        {name}
       </row>
       <row>
         <rowitem>
-          <MapIcon />
-          время на этап
+          <Icon type="timer" />
+          Время на этап: 14д 12ч (до 12.12.19)
         </rowitem>
-        <rowitem>hello</rowitem>
       </row>
       <row>
-        <rowitem>
-          <i>a</i>
-          device
-        </rowitem>
+        <Device {...device} />
         <rowitem {...use({ push: true })}>
-          <i>a</i>
-          address
+          <Icon type="map" />
+          {address}
         </rowitem>
-        <rowitem>
-          <i>a</i>
-          number
+        <rowitem {...use({ caption: true })}>
+          <Icon type="number" />
+          {id}
         </rowitem>
-        <rowitem>
-          <i>a</i>
+        <rowitem {...use({ caption: true })}>
+          <Icon type="calendar" />
           date
         </rowitem>
       </row>

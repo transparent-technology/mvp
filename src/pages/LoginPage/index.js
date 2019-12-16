@@ -18,7 +18,7 @@ export const LoginPage = ({ history }) => {
       setLoading(true)
       auth
         .post("login", data)
-        .then(() => history.push("/tasks"))
+        .then(() => history.push("/tasks?GroupType=Executing"))
         .finally(() => mount && setLoading(false))
     }
     return () => (mount = false)

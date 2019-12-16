@@ -19,4 +19,24 @@ export const method = axios.create({
   baseURL: "https://transparent-staging.herokuapp.com/api"
 })
 
-method.interceptors.request.use(req => req, Promise.reject)
+method.interceptors.request.use(req => {
+  req.headers["Authorization"] = `Bearer ${JSON.parse(
+    localStorage.getItem("token")
+  )}`
+  return req
+}, Promise.reject)
+
+method.interceptors.response.use(
+  res => res.data.successResponse,
+  err  => {
+    if(err.response.status === 401) {
+      const token = JSON.parse(localStorage.getItem('token'))
+      const refreshToken = JSON.parse(localStorage.getItem('refreshToken'))
+      auth.post('refreshToken', {token, refreshToken}).then(() => {
+        console.log('refresh')
+        return method(err.response.config)
+      })
+    }
+    return Promise.reject(err)
+  }
+)

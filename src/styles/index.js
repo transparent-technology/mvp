@@ -39,3 +39,10 @@ export const tabs = css`
   }
 `
 
+export const grid = css`
+  grid {
+    display: grid;
+    grid-template-columns: 8fr 4fr;
+    grid-column-gap: 24px;
+  }
+`
