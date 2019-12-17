@@ -17,6 +17,7 @@ export const TasksAll = ({ location }) => {
 
   useEffect(() => {
     if (hash) {
+      setState(state => ({ ...state, items: [] }))
       method.get(`Tasks?GroupType=${hash.slice(1)}`).then(setState)
     }
   }, [hash])
