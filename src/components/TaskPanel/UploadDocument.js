@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react"
-import styled, { css } from "reshadow/macro"
+import React, { useState, useRef, useEffect } from "react"
+import styled, { css, use } from "reshadow/macro"
 import { Button } from "antd"
 
 import { method } from "services/api"
@@ -40,25 +40,72 @@ const styles = css`
     border-radius: 4px;
     height: 40px;
     background: #fff;
+    & > Icon {
+      margin-right: 8px;
+    }
   }
 
-  Icon {
-    margin-right: 8px;
+  filerow {
+    display: flex;
+    & > * {
+      margin-right: 8px;
+    }
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  file,
+  fileupload {
+    display: flex;
+    align-items: center;
+
+    & > Icon {
+      margin-left: 4px;
+    }
+    & > Icon[|animation] {
+      animation: spin 2s infinite linear;
+    }
+    & > Icon[role="button"]:hover {
+      color: red;
+      cursor: pointer;
+    }
   }
 `
 
-export const UploadDocument = () => {
-  const [files, setFiles] = useState([])
+export const UploadDocument = ({ push }) => {
+  const [file, setFile] = useState(null)
+  const [items, setItems] = useState([])
+  const [deleted, setDeleted] = useState(null)
   const input = useRef(null)
 
-  const handleChange = () => {
-    if (input.current.files.length) {
+  useEffect(() => {
+    if (file) {
       let dataFile = new FormData()
       dataFile.append("file", input.current.files[0])
-      method.post("Documents/upload", dataFile).then(console.log)
-      console.log(input.current.files[0].name)
+      method.post("Documents/upload", dataFile).then(data => {
+        setItems([...items, ...data])
+        setFile(null)
+      })
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file])
+
+  useEffect(() => {
+    if (deleted) {
+      method.delete(`Documents/${deleted}`).then(() => {
+        setItems(items.filter(item => item.id !== deleted))
+        setDeleted(null)
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleted])
 
   return styled(styles)(
     <row>
@@ -67,10 +114,41 @@ export const UploadDocument = () => {
           <Icon type="upload" />
           Загрузить файл
         </btn>
-        <input type="file" ref={input} onChange={handleChange} />
+        <input
+          type="file"
+          ref={input}
+          onChange={() => setFile(input.current.files[0].name)}
+        />
       </upload>
-      <div>line</div>
-      <Button type="primary" size="large">
+      <filerow>
+        {items.map(item => (
+          <fileupload key={item.id}>
+            <a href={item.url} target="_blank" rel="noreferrer noopener">
+              {item.name}
+            </a>
+            <Icon
+              type="close"
+              role="button"
+              {...use({ animation: item.id === deleted })}
+              onClick={() => setDeleted(item.id)}
+            />
+          </fileupload>
+        ))}
+        {file && (
+          <file>
+            {file}
+            <Icon type="close" {...use({ animation: true })} />
+          </file>
+        )}
+      </filerow>
+      <Button
+        type="primary"
+        size="large"
+        disabled={!items.length}
+        onClick={() =>
+          push({ pushData: { documentsIds: items.map(item => item.id) } })
+        }
+      >
         Завершить этап
       </Button>
     </row>

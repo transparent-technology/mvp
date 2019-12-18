@@ -44,5 +44,34 @@ export const grid = css`
     display: grid;
     grid-template-columns: 8fr 4fr;
     grid-column-gap: 24px;
+    align-items: start;
+  }
+`
+
+export const avatar = css`
+  avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #f3f5f6;
+    color: rgba(39, 47, 90, 0.45);
+  }
+`
+export const comment = css`
+  comment_wrap {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-gap: 8px;
+  }
+  comment_header {
+    font-size: 12px;
+    color: rgba(39, 47, 90, 0.45);
+    & > time {
+      color: rgba(39, 47, 90, 0.25);
+    }
   }
 `

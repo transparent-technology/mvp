@@ -2,13 +2,19 @@ import React, { useState, useEffect } from "react"
 import styled from "reshadow/macro"
 
 import { method } from "services/api"
-import { TasksHeader, Stages, TaskPanel } from "components"
+import { TasksHeader, Stages, TaskPanel, Comments } from "components"
 import { paper, grid } from "styles"
 
 export const TasksId = ({ location, match }) => {
   const [state, setState] = useState({ pushData: null, ...location.state })
-  const { stages, currentStage = {}, pushData, closingTime } = state
-  console.log("state", state)
+  const {
+    stages = [],
+    currentStage = {},
+    pushData,
+    userOperatingStatus,
+    comments
+  } = state
+  // console.log("state", state)
 
   useEffect(() => {
     method.get(`Tasks/${match.params.taskId}`).then(updateState)
@@ -29,23 +35,27 @@ export const TasksId = ({ location, match }) => {
     setState(state => ({ ...state, ...data }))
   }
 
-  return styled(
-    paper,
-    grid
-  )(
+  return styled(paper, grid)`
+    Comments {
+      margin-bottom: 24px;
+    }
+  `(
     <>
       <div>breadcrumb</div>
       <TasksHeader state={state} />
       <TaskPanel
         currentStage={currentStage}
         push={updateState}
-        closingTime={closingTime}
+        userStatus={userOperatingStatus}
+        loading={!!stages.length}
       />
       <grid>
         <div>
-          <paper>
-            <h3>Комментарии</h3>
-          </paper>
+          <Comments
+            url={`Tasks/${match.params.taskId}/Comments`}
+            data={comments}
+            showCreator={userOperatingStatus === "Executor"}
+          />
           <paper>info</paper>
         </div>
         <Stages stages={stages} />

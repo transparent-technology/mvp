@@ -10,8 +10,8 @@ export const Stages = ({ stages = [] }) => {
     <paper>
       <h3>Этапы выполнения</h3>
       <ul>
-        {stages.map(stage => (
-          <StageItem key={stage.id} {...stage} />
+        {stages.map((stage, i) => (
+          <StageItem key={stage.id} index={i + 1} {...stage} />
         ))}
       </ul>
     </paper>
@@ -80,6 +80,7 @@ const stage = css`
 
   content {
     flex-grow: 1;
+    padding-bottom: 24px;
 
     & div {
       font-size: 12px;
@@ -94,7 +95,7 @@ const stage = css`
 `
 
 const StageItem = ({
-  number,
+  index,
   name,
   status,
   type,
@@ -106,10 +107,12 @@ const StageItem = ({
       <shape>
         {type === "Switch" ? (
           <Icon type="choise" />
+        ) : type === "Final" ? (
+          <Icon type="finish" />
         ) : status === "Done" ? (
           <Icon type="ok" />
         ) : (
-          number
+          index
         )}
       </shape>
       <content>

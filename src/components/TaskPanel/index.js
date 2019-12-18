@@ -1,29 +1,45 @@
 import React from "react"
-import { Button } from "antd"
+import { Button, Input } from "antd"
 
 import { ChooseExecutorAndNotify } from "./ChooseExecutorAndNotify"
 import { UploadDocument } from "./UploadDocument"
 import { Switch } from "./Switch"
+import { ChooseExecutorAndSwitch } from "./ChooseExecutorAndSwitch"
 
-export const TaskPanel = ({ currentStage, closingTime, push }) => {
+export const TaskPanel = ({ currentStage, userStatus, push, loading }) => {
+  if (!loading) return "...loading"
   if (!currentStage) return null
-
-  if (currentStage.action === "ChooseExecutorAndNotify")
-    return <ChooseExecutorAndNotify push={push} />
-  if (currentStage.action === "UploadDocument")
-    return <UploadDocument push={push} />
-  if (currentStage.action === "Switch") return <Switch push={push} />
-  if (currentStage.action === "Completion")
+  if (userStatus === "Observer")
     return (
-      <Button
-        style={{ justifySelf: "start" }}
-        type="primary"
+      <Input
+        defaultValue={currentStage.perpetrator.name}
+        disabled
         size="large"
-        onClick={() => push({ pushData: {} })}
-      >
-        Завершить этап
-      </Button>
+      />
     )
+  // console.log("action ======>", currentStage.action)
 
-  return <div>loading...</div>
+  switch (currentStage.action) {
+    case "ChooseExecutorAndNotify":
+      return <ChooseExecutorAndNotify />
+    case "ChooseExecutorAndSwitch":
+      return <ChooseExecutorAndSwitch />
+    case "Switch":
+      return <Switch />
+    case "UploadDocument":
+      return <UploadDocument />
+    case "Completion":
+      return (
+        <Button
+          style={{ justifySelf: "start" }}
+          type="primary"
+          size="large"
+          onClick={() => push({ pushData: {} })}
+        >
+          Завершить этап
+        </Button>
+      )
+    default:
+      return null
+  }
 }

@@ -16,7 +16,8 @@ auth.interceptors.response.use(res => {
 }, Promise.reject)
 
 export const method = axios.create({
-  baseURL: "https://transparent-staging.herokuapp.com/api"
+  baseURL: "https://transparent-staging.herokuapp.com/api",
+  headers: { "Content-Type": "application/json" }
 })
 
 method.interceptors.request.use(req => {
@@ -28,14 +29,18 @@ method.interceptors.request.use(req => {
 
 method.interceptors.response.use(
   res => res.data.successResponse,
-  err  => {
-    if(err.response.status === 401) {
-      const token = JSON.parse(localStorage.getItem('token'))
-      const refreshToken = JSON.parse(localStorage.getItem('refreshToken'))
-      auth.post('refreshToken', {token, refreshToken}).then(() => {
-        console.log('refresh')
-        return method(err.response.config)
-      })
+  err => {
+    if (err.response.status === 401) {
+      const token = JSON.parse(localStorage.getItem("token"))
+      const refreshToken = JSON.parse(localStorage.getItem("refreshToken"))
+      return method
+        .post("Auth/refreshToken", { token, refreshToken })
+        .then(res => {
+          const { token, refreshToken } = res
+          localStorage.setItem("token", JSON.stringify(token))
+          localStorage.setItem("refreshToken", JSON.stringify(refreshToken))
+        })
+        .then(() => method(err.config))
     }
     return Promise.reject(err)
   }
