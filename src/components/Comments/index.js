@@ -17,30 +17,41 @@ export const Comments = ({
   const [state, dispatch] = useReducer(reducer, {
     url,
     comments: [],
-    createComment: null
+    create: null,
+    edit: null,
+    deleteId: null,
+    loading: false
   })
 
-  const { comments, createComment } = state
+  const { comments, create, edit } = state
 
   useEffect(() => {
     if (data) {
-      dispatch({ type: "upload", payload: data })
+      dispatch({ type: "upload", payload: { comments: data } })
     }
   }, [data])
 
   useEffect(() => {
-    if (createComment) {
-      method.post(url, createComment)
+    if (create) {
+      method
+        .post(url, JSON.stringify(create))
+        .then(item => dispatch({ type: "add_comment", payload: item }))
     }
-  }, [createComment, url])
 
-  
+    if (edit) {
+      method
+        .put(url + "/" + edit.id, JSON.stringify(edit.value))
+        .then(item => dispatch({ type: "add_edit_comment", payload: item }))
+    }
+  }, [create, edit, url])
 
   return styled(paper)(
     <CommentContext.Provider value={{ state, dispatch }}>
       <paper {...props}>
         <h3>
-          {comments ? "Комментарии" : `Комментарии (${state.comments.length})`}
+          {!comments.length
+            ? "Комментарии"
+            : `Комментарии (${comments.length})`}
         </h3>
         <CommentList comments={state.comments} />
         {showCreator && <CommentCreator />}

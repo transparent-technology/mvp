@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import styled from "reshadow/macro"
 
 import { avatar, comment } from "styles"
@@ -16,7 +16,21 @@ export const CommentListItem = ({
   canBeEdited
 }) => {
   const [edit, setEdit] = useState("")
-  const { dispatch } = useContext(CommentContext)
+  const {
+    state: { loading },
+    dispatch
+  } = useContext(CommentContext)
+
+  useEffect(() => {
+    if (!loading) {
+      setEdit("")
+    }
+  }, [loading])
+
+  const saveEdit = () => {
+    if (text === edit) return setEdit("")
+    dispatch({ type: "edit_comment", payload: { value: edit, id } })
+  }
 
   return styled(avatar, comment)`
     wrap {
@@ -53,11 +67,21 @@ export const CommentListItem = ({
         </comment_header>
         {edit ? (
           <>
-            <TextArea autoSize value={edit} />
+            <TextArea
+              autoSize
+              value={edit}
+              onChange={e => setEdit(e.target.value)}
+              disabled={loading}
+            />
             <AntButton size="small" onClick={() => setEdit("")}>
               Отмена
             </AntButton>
-            <AntButton size="small" type="primary">
+            <AntButton
+              size="small"
+              type="primary"
+              onClick={saveEdit}
+              loading={loading}
+            >
               Сохранить
             </AntButton>
           </>
@@ -72,7 +96,7 @@ export const CommentListItem = ({
             title="Вы хотите удалить комментарий?"
             cancelText="Нет"
             okText="Да"
-            onConfirm={() => dispatch({ type: "push_delete", payload: id })}
+            onConfirm={() => dispatch({ type: "delete_comment", payload: id })}
           >
             <Icon type="del" role="button" />
           </Popconfirm>

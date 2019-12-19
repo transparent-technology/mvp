@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import styled from "reshadow/macro"
 
 import { Input, Button as AntButton } from "antd"
@@ -6,9 +6,16 @@ import { Icon } from "components"
 import { avatar, comment } from "styles"
 import { CommentContext } from "./context"
 
-export const CommentCreator = React.memo(() => {
+export const CommentCreator = () => {
+  const [value, setValue] = useState("")
   const { dispatch, state } = useContext(CommentContext)
-  const { value } = state
+  const { loading } = state
+
+  useEffect(() => {
+    if (!loading) {
+      setValue("")
+    }
+  }, [loading])
 
   return styled(avatar, comment)`
     AntButton {
@@ -23,14 +30,22 @@ export const CommentCreator = React.memo(() => {
         <Input.TextArea
           autoSize
           value={value}
-          onChange={e => {
-            dispatch({ type: "create_comment", payload: e.target.value })
-          }}
+          onChange={e => setValue(e.target.value)}
+          disabled={loading}
         />
         <div>
-          <AntButton size="small">Добавить комментарии</AntButton>
+          <AntButton
+            size="small"
+            loading={loading}
+            onClick={() =>
+              value.trim() &&
+              dispatch({ type: "create_comment", payload: value })
+            }
+          >
+            Добавить комментарии
+          </AntButton>
         </div>
       </div>
     </comment_wrap>
   )
-})
+}
