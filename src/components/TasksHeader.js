@@ -12,6 +12,7 @@ export const TasksHeader = ({ state }) => {
     currentStage = {}
   } = state
 
+
   return styled`
     taskheader {
       color: rgba(39, 47, 90, 0.65);

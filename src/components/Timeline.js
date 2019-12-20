@@ -1,6 +1,8 @@
 import React from "react"
 import styled from "reshadow/macro"
 
+// import { useTimer } from "hooks"
+
 export const Timeline = ({ start, finish }) => {
   const startDate = new Date(start).getTime()
   const finishDate = new Date(finish).getTime()
@@ -27,6 +29,7 @@ export const Timeline = ({ start, finish }) => {
         display: block;
         background: red;
         width: ${percent + "%"};
+        border-radius: inherit;
         height: 100%;
         left: 0;
         top: 0;
@@ -36,7 +39,7 @@ export const Timeline = ({ start, finish }) => {
   `(
     <timeline>
       <line />
-      36д 12ч (до {new Date(finish).toLocaleDateString()})
+      timer (до {new Date(finish).toLocaleDateString()})
     </timeline>
   )
 }

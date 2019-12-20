@@ -23,7 +23,7 @@ export const Comments = ({
     loading: false
   })
 
-  const { comments, create, edit } = state
+  const { comments, create, edit, deleteId } = state
 
   useEffect(() => {
     if (data) {
@@ -43,7 +43,21 @@ export const Comments = ({
         .put(url + "/" + edit.id, JSON.stringify(edit.value))
         .then(item => dispatch({ type: "add_edit_comment", payload: item }))
     }
-  }, [create, edit, url])
+
+    if (deleteId) {
+      method.delete(url + "/" + deleteId).then(() => {
+        dispatch({
+          type: "upload",
+          payload: {
+            loading: false,
+            deleteId: null,
+            comments: comments.filter(item => item.id !== deleteId)
+          }
+        })
+      })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [create, edit, deleteId, url])
 
   return styled(paper)(
     <CommentContext.Provider value={{ state, dispatch }}>

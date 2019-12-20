@@ -2,6 +2,7 @@ import React from "react"
 import styled, { use, css } from "reshadow/macro"
 import { useHistory } from "react-router-dom"
 
+import { formatedDate } from "services/date"
 import { Icon, Device, Timeline } from "components"
 
 export const TasksAllList = ({ items = [] }) => {
@@ -64,6 +65,10 @@ const tasksItemStyle = css`
   Icon {
     margin-right: 8px;
   }
+
+  h4 {
+    font-weight: 500;
+  }
 `
 
 const TasksAllListItem = ({
@@ -75,7 +80,6 @@ const TasksAllListItem = ({
   closingTime,
   address,
   perpetrator,
-  isResponsible,
   currentStage,
   onClick,
   hash
@@ -100,7 +104,8 @@ const TasksAllListItem = ({
         <row>
           <rowitem>
             <Icon type="timer" />
-            Время на этап: 14д 12ч (до 12.12.19)
+            Время на этап: timer (до{" "}
+            {formatedDate(currentStage.expectedCompletionTime)})
           </rowitem>
           {hash === "#Observing" && (
             <rowitem>
@@ -122,7 +127,7 @@ const TasksAllListItem = ({
         </rowitem>
         <rowitem {...use({ caption: true })}>
           <Icon type="calendar" />
-          date
+          {formatedDate(creationTime, { time: true })}
         </rowitem>
       </row>
     </listitem>

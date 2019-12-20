@@ -5,6 +5,7 @@ import { avatar, comment } from "styles"
 import { Icon } from "components"
 import { Input, Button as AntButton, Popconfirm } from "antd"
 import { CommentContext } from "./context"
+import { formatedDate } from "services/date"
 
 const { TextArea } = Input
 
@@ -63,7 +64,7 @@ export const CommentListItem = ({
       </avatar>
       <div>
         <comment_header>
-          {author} <time>{createdAt}</time>
+          {author} <time>{formatedDate(createdAt, { time: true })}</time>
         </comment_header>
         {edit ? (
           <>

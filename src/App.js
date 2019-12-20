@@ -1,7 +1,7 @@
 import React, { useReducer } from "react"
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom"
 import { Layout } from "components"
-import { LoginPage, TasksPage } from "pages"
+import { LoginPage, TasksPage, ObjectPage } from "pages"
 
 import { AppContext } from "contex"
 
@@ -17,7 +17,7 @@ export default () => {
             <Switch>
               <Route path="/" render={() => <Redirect to="/tasks" />} exact />
               <Route path="/tasks" component={TasksPage} />
-              <Route path="/objects" render={() => "obj page"} />
+              <Route path="/objects" component={ObjectPage} />
               <Route path="*" render={() => "not fount"} />
             </Switch>
           </Layout>
