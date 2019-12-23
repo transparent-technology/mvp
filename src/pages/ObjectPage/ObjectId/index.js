@@ -3,21 +3,22 @@ import styled, { use } from "reshadow/macro"
 import { Link } from "react-router-dom"
 
 import { method } from "services/api"
-import { tabs, paper, grid, device_item } from "styles"
-import { getIconProps } from "styles/helper"
-import { Icon, List } from "components"
-import { formatedDate } from "services/date"
+import { tabs, paper, grid } from "styles"
+import { List } from "components"
 import { Events } from "../Events"
+import { InfoListItem } from "../InfoListItem"
+import { DeviceListItem } from "../DeviceListItem"
 
 export const ObjectId = ({ match, location, history }) => {
   const { hash } = location
+  const { params } = match
   const [loading, setLoading] = useState(false)
   const [state, setState] = useState({})
   useEffect(() => {
     if (!state.index || !state.devices) {
       setLoading(true)
       method
-        .get(`HousingStocks/${match.params.objectId}/${hash.slice(1)}`)
+        .get(`HousingStocks/${params.objectId}/${hash.slice(1)}`)
         .then(res => {
           setLoading(false)
           setState(state => ({ ...state, ...res }))
@@ -26,9 +27,7 @@ export const ObjectId = ({ match, location, history }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hash])
 
-  // console.log(state)
-
-  return styled(tabs, paper, grid, device_item)`
+  return styled(tabs, paper, grid)`
     Icon {
       margin-right: 8px;
     }
@@ -88,7 +87,12 @@ export const ObjectId = ({ match, location, history }) => {
               renderItem={item => (
                 <DeviceListItem
                   key={item.id}
-                  onClick={() => console.log(1)}
+                  onClick={() =>
+                    history.push(
+                      `/objects/${params.objectId}/device/${item.id}`,
+                      { device: item }
+                    )
+                  }
                   {...item}
                 />
               )}
@@ -98,73 +102,5 @@ export const ObjectId = ({ match, location, history }) => {
         <Events />
       </grid>
     </>
-  )
-}
-
-const InfoListItem = ({ title, value }) =>
-  styled`
-    li {
-      border-bottom: 1px solid #d9d9d9;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      padding: 12px 0;
-    }
-  `(
-    <li>
-      <span>{title}</span>
-      <span>{value}</span>
-    </li>
-  )
-
-const DeviceListItem = ({
-  model,
-  serialNumber,
-  futureCheckingDate,
-  resource,
-  onClick
-}) => {
-  const iconProps = getIconProps(resource)
-  return styled`
-    li {
-      border-bottom: 1px solid #d9d9d9;
-      padding: 16px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-    }
-
-    li > div {
-      display: inherit;
-      align-items: inherit;
-
-      & span {
-        margin-left: 4px;
-        color: rgba(39, 47, 90, 0.45);
-      }
-
-      &:first-child {
-        color: #272F5A;
-      }
-
-      &:last-child {
-        font-size: 12px;
-      }
-    }
-
-    Icon {
-      margin-right: 8px;
-    }
-  `(
-    <li onClick={onClick}>
-      <div>
-        <Icon {...iconProps} />
-        {model}
-        <span>({serialNumber})</span>
-      </div>
-      <div>
-        <Icon type="calendar" /> до {formatedDate(futureCheckingDate)}
-      </div>
-    </li>
   )
 }

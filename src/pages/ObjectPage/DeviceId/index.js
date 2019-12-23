@@ -4,32 +4,51 @@ import styled, { use } from "reshadow/macro"
 
 import { method } from "services/api"
 import { paper, tabs, grid } from "styles"
+import { Icon, List } from "components"
 import { Events } from "../Events"
+import { getIconProps } from "styles/helper"
+import { InfoListItem } from "../InfoListItem"
+import { DeviceListItem } from "../DeviceListItem"
 
-export const DeviceId = ({ match, location }) => {
+export const DeviceId = ({ match, location, history }) => {
   const { hash } = location
   const {
     params: { objectId, deviceId }
   } = match
+  const [loading, setLoading] = useState(false)
   const [state, setState] = useState({})
-  const { device, pipes, devices = [] } = state
+  const { device = {}, pipes, devices } = state
 
+  console.log(device)
   useEffect(() => {
-    method
-      .get(`HousingStocks/${objectId}/Devices/${deviceId}/${hash.slice(1)}`)
-      .then(setState)
+    if (!device.id || !devices || !pipes) {
+      // setLoading(true)
+      method
+        .get(`HousingStocks/${objectId}/Devices/${deviceId}/${hash.slice(1)}`)
+        .then(res => {
+          setLoading(false)
+          setState(state => ({ ...state, ...res }))
+        })
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hash])
 
-  return styled(
-    paper,
-    tabs,
-    grid
-  )(
+  return styled(paper, tabs, grid)`
+    h1 > Icon {
+      margin-right: 8px;
+    }
+  `(
     <>
       <div>breadcrumbs</div>
-      <h1>title</h1>
+      {device ? (
+        <h1>
+          <Icon size={24} {...getIconProps(device.resource)} />
+          {device.model} ({device.serialNumber})
+        </h1>
+      ) : (
+        "loading..."
+      )}
       <grid>
         <paper>
           <tabs>
@@ -49,11 +68,48 @@ export const DeviceId = ({ match, location }) => {
               Подключенные приборы
             </Link>
           </tabs>
-          <ul>
-            {hash === "" && "info"}
-            {hash === "#CommunicationPipes" && "pipe"}
-            {hash === "#Related" && devices.map(item => <li>`</li>)}
-          </ul>
+
+          {hash === "" && (
+            <List
+              loading={loading}
+              data={[
+                ["Тип прибора", "type", "type"],
+                ["Серийный номер", "serialNumber"],
+                [
+                  "Дата ввода в эксплуатацию",
+                  "commercialAccountingDate",
+                  "date"
+                ],
+                ["Дата поверки прибора", "lastCheckingDate", "date"],
+                [
+                  "Дата следующей поверки прибора",
+                  "futureCheckingDate",
+                  "date"
+                ],
+                ["Диаметр", "diameter"]
+              ]}
+              renderItem={item => (
+                <InfoListItem key={item[0]} title={item[0]} value={item[1]} />
+              )}
+            />
+          )}
+          {hash === "#CommunicationPipes" && "pipe"}
+          {hash === "#Related" && (
+            <List
+              loading={loading}
+              data={devices}
+              renderItem={item => (
+                <DeviceListItem
+                  key={item.id}
+                  {...item}
+                  onClick={() => {
+                    setState({})
+                    history.push(`/objects/${objectId}/device/${item.id}`)
+                  }}
+                />
+              )}
+            />
+          )}
         </paper>
         <Events />
       </grid>
