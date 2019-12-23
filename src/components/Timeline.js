@@ -17,7 +17,7 @@ export const Timeline = ({ start, finish }) => {
 
     line {
       flex-grow: 1;
-      height: 6px;
+      height: 4px;
       border-radius: 8px;
       background: rgba(39, 47, 90, 0.04);
       margin-right: 8px;
@@ -27,7 +27,7 @@ export const Timeline = ({ start, finish }) => {
       &::before {
         content: '';
         display: block;
-        background: red;
+        background: #ED3B45;
         width: ${percent + "%"};
         border-radius: inherit;
         height: 100%;

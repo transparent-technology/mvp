@@ -26,7 +26,7 @@ const getIcon = resource => {
   }
 }
 
-export const Device = ({ model, serialNumber, type, resource }) =>
+export const Device = ({ model, serialNumber, resource }) =>
   styled`
     wrap {
       display: flex;

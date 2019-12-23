@@ -75,3 +75,20 @@ export const comment = css`
     }
   }
 `
+
+export const device_item = css`
+  device_item {
+    border-bottom: 1px solid #d9d9d9;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    & > span {
+      display: inherit;
+      align: inherit;
+      font-size: 12px;
+      margin-left: auto;
+    }
+  }
+`
