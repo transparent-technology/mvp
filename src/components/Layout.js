@@ -1,9 +1,10 @@
-import React from "react"
-import { NavLink } from "react-router-dom"
+import React, { useState, useEffect } from "react"
+import { NavLink, useHistory } from "react-router-dom"
 import styled, { css } from "reshadow/macro"
 
 import logo from "assets/logo.svg"
 import { Icon } from "components"
+import { method } from "services/api"
 
 const styles = css`
   layout {
@@ -81,6 +82,25 @@ const navlink = css`
 `
 
 export const Layout = ({ children }) => {
+  const [startLogout, setStartLogout] = useState(false)
+  const history = useHistory()
+  useEffect(() => {
+    if (startLogout) {
+      const token = JSON.parse(localStorage.getItem("token"))
+      const refreshToken = JSON.parse(localStorage.getItem("refreshToken"))
+      console.log(token, refreshToken)
+      method.post("Auth/logout", { token, refreshToken }).then(() => {
+        localStorage.clear()
+        history.push("/login")
+      })
+    }
+  }, [startLogout])
+
+  const logout = e => {
+    e.preventDefault()
+    setStartLogout(true)
+  }
+
   return styled(
     styles,
     navlink
@@ -106,7 +126,11 @@ export const Layout = ({ children }) => {
             <Icon type="username" />
             Настройки профиля
           </NavLink>
-          <NavLink to="/login" activeClassName={navlink.active}>
+          <NavLink
+            to="/login"
+            activeClassName={navlink.active}
+            onClick={logout}
+          >
             <Icon type="exit" />
             Выход
           </NavLink>

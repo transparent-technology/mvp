@@ -4,15 +4,12 @@ import styled from "reshadow/macro"
 import { method } from "services/api"
 import { paper } from "styles"
 
-const createFieldList = state => [
-  { title: "Фамилия и имя сотрудника", value: "firstName" }
-]
-
 export const UserSettingPage = () => {
   const [state, setState] = useState(null)
   useEffect(() => {
-    method.get("ManagingFirmUsers/current").then(console.log)
+    method.get("ManagingFirmUsers/current").then(setState)
   }, [])
+
   return styled(paper)`
     ul {
       padding: 0;
@@ -43,24 +40,38 @@ export const UserSettingPage = () => {
     <>
       <h1>Настройки профиля</h1>
       <paper>
-        <ul>
-          <li>
-            <span>ttile</span>
-            <span>fieldI</span>
-          </li>{" "}
-          <li>
-            <span>ttile</span>
-            <span>fieldI</span>
-          </li>{" "}
-          <li>
-            <span>ttile</span>
-            <span>fieldI</span>
-          </li>{" "}
-          <li>
-            <span>ttile</span>
-            <span>fieldI</span>
-          </li>
-        </ul>
+        {state ? (
+          <ul>
+            <li>
+              <span>Фамилия и имя сотрудника</span>
+              <span>
+                {state.firstName} {state.lastName}
+              </span>
+            </li>
+            <li>
+              <span>Должность</span>
+              <span>{state.position}</span>
+            </li>
+            <li>
+              <span>Внутренний номер сотрудника</span>
+              <span>{state.cellphone}</span>
+            </li>
+            <li>
+              <span>Отдел</span>
+              <span>{state.number}</span>
+            </li>
+            <li>
+              <span>Контактный номер</span>
+              <span>{state.cellphone}</span>
+            </li>
+            <li>
+              <span>Адрес электронной почты (логин)</span>
+              <span>{state.email}</span>
+            </li>
+          </ul>
+        ) : (
+          "loading"
+        )}
       </paper>
     </>
   )
