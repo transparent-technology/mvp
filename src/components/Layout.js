@@ -102,12 +102,13 @@ export const Layout = ({ children }) => {
             <Icon type="object" />
             Объекты
           </NavLink>
-          <NavLink to="/settings" activeClassName={navlink.active}>
-            <Icon type="company" />
-            Профиль компании
+          <NavLink to="/profile" activeClassName={navlink.active}>
+            <Icon type="username" />
+            Настройки профиля
           </NavLink>
           <NavLink to="/login" activeClassName={navlink.active}>
-            exit
+            <Icon type="exit" />
+            Выход
           </NavLink>
         </nav>
       </aside>

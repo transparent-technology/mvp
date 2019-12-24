@@ -1,19 +1,62 @@
-import React from "react"
+import React, { useState } from "react"
 import styled, { css, use } from "reshadow/macro"
+import { Button as AntButton, Modal as AntModal, Input } from "antd"
 
-import { Icon } from "components"
+import { Icon, List } from "components"
 import { paper } from "styles"
 
-export const Stages = ({ stages = [] }) => {
-  if (!stages.length) return "загрузка..."
-  return styled(paper)(
+const getActiveStage = items => {
+  let res
+  items.forEach((item, i) => {
+    if (item.status === "InProgress") {
+      res = i
+    }
+  })
+  return res
+}
+
+export const Stages = ({ stages, isExecutor = false }) => {
+  const [visible, setVisible] = useState(false)
+  const activeStageIndex = getActiveStage(stages)
+
+  const cancel = () => {
+    setVisible(false)
+  }
+
+  const confirm = () => {
+    console.log(1)
+  }
+
+  return styled(paper)`
+    textarea {
+      color: red;
+    }
+  `(
     <paper>
       <h3>Этапы выполнения</h3>
-      <ul>
-        {stages.map((stage, i) => (
-          <StageItem key={stage.id} index={i + 1} {...stage} />
-        ))}
-      </ul>
+      <List
+        data={stages}
+        renderItem={(item, i) => (
+          <StageItem
+            key={item.id}
+            index={i}
+            showRevertBtn={activeStageIndex - 1 === i && isExecutor}
+            onClick={() => setVisible(true)}
+            {...item}
+          />
+        )}
+      />
+      <AntModal
+        visible={visible}
+        title={<h3>Возвращение задачи</h3>}
+        onOk={confirm}
+        onCancel={cancel}
+      >
+        <div>Вы можете оставить комментарий о причине возвращения.</div>
+        <div>Это позволит оператору понять причину вашего решения</div>
+        <br />
+        <Input.TextArea />
+      </AntModal>
     </paper>
   )
 }
@@ -91,18 +134,23 @@ const stage = css`
       color: rgba(39, 47, 90, 0.45);
       margin-left: 8px;
     }
+    & > AntButton {
+      margin-top: 8px;
+    }
   }
 `
 
 const StageItem = ({
-  index,
+  number,
   name,
   status,
   type,
   closingTime,
-  perpetrator = {}
-}) =>
-  styled(stage)(
+  showRevertBtn,
+  perpetrator = {},
+  onClick
+}) => {
+  return styled(stage)(
     <stage as="li" {...use({ status })}>
       <shape>
         {type === "Switch" ? (
@@ -112,17 +160,25 @@ const StageItem = ({
         ) : status === "Done" ? (
           <Icon type="ok" />
         ) : (
-          index
+          number
         )}
       </shape>
       <content>
         {name}
         {status === "Done" && (
-          <div>
-            {perpetrator.name}
-            <span>{new Date(closingTime).toLocaleDateString()}</span>
-          </div>
+          <>
+            <div>
+              {perpetrator.name}
+              <span>{new Date(closingTime).toLocaleDateString()}</span>
+            </div>
+            {showRevertBtn && (
+              <AntButton size="small" onClick={onClick}>
+                Вернуть этап
+              </AntButton>
+            )}
+          </>
         )}
       </content>
     </stage>
   )
+}

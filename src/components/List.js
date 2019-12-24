@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "reshadow/macro"
 
-export const List = ({ data = [], loading = true, renderItem = () => {} }) => {
+export const List = ({ data = [], loading = false, renderItem = () => {} }) => {
   if (loading) return "loading"
   if (!data.length) return "empty"
   return styled`

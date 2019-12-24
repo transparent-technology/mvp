@@ -71,7 +71,7 @@ const tasksItemStyle = css`
   }
 `
 
-const TasksAllListItem = ({
+export const TasksAllListItem = ({
   id,
   name,
   device,

@@ -5,20 +5,35 @@ import styled, { use } from "reshadow/macro"
 import { method } from "services/api"
 import { paper, tabs } from "styles"
 import { Select as AntSelect, Input } from "antd"
-import { TasksAllList } from "./TasksAllList"
-import { Icon } from "components"
+import { TasksAllListItem } from "./TasksAllListItem"
+
+import { Icon, List } from "components"
 
 const { Option: AntOption } = AntSelect
 
-export const TasksAll = ({ location }) => {
+const sortSelectItems = [
+  { value: "minDate", icon: "sort_max", title: "дате создания" },
+  { value: "maxDate", icon: "sort_min", title: "дате создания" },
+  { value: "minTimeTask", icon: "sort_max", title: "времени на задачу" },
+  { value: "maxTimeTask", icon: "sort_min", title: "времени на задачу" },
+  { value: "minTimeStage", icon: "sort_max", title: "времени на этап" },
+  { value: "maxTimeStage", icon: "sort_min", title: "времени на этап" }
+]
+
+export const TasksAll = ({ location, history }) => {
+  const [loading, setLoading] = useState(false)
   const [state, setState] = useState({})
-  const { executingTasksCount, observingTasksCount, items } = state
+  const { executingTasksCount, observingTasksCount, items = [] } = state
   const { hash, pathname } = location
 
   useEffect(() => {
     if (hash) {
+      setLoading(true)
       setState(state => ({ ...state, items: [] }))
-      method.get(`Tasks?GroupType=${hash.slice(1)}`).then(setState)
+      method.get(`Tasks?GroupType=${hash.slice(1)}`).then(res => {
+        setState(res)
+        setLoading(false)
+      })
     }
   }, [hash])
 
@@ -76,34 +91,26 @@ export const TasksAll = ({ location }) => {
           <div>
             Сортировать по:
             <AntSelect defaultValue="minDate">
-              <AntOption value="minDate">
-                <Icon type="sort_max" />
-                дате создания
-              </AntOption>
-              <AntOption value="maxDate">
-                <Icon type="sort_min" />
-                дате создания
-              </AntOption>
-              <AntOption value="minTimeTask">
-                <Icon type="sort_max" />
-                времени на задачу
-              </AntOption>
-              <AntOption value="maxTimeTask">
-                <Icon type="sort_min" />
-                времени на задачу
-              </AntOption>
-              <AntOption value="minTimeStage">
-                <Icon type="sort_max" />
-                времени на этап
-              </AntOption>
-              <AntOption value="maxTimeStage">
-                <Icon type="sort_min" />
-                времени на этап
-              </AntOption>
+              {sortSelectItems.map(({ value, icon, title }) => (
+                <AntOption value={value} key={value}>
+                  <Icon type={icon} />
+                  {title}
+                </AntOption>
+              ))}
             </AntSelect>
           </div>
         </filter>
-        <TasksAllList items={items} />
+        <List
+          loading={loading}
+          data={items}
+          renderItem={item => (
+            <TasksAllListItem
+              key={item.id}
+              onClick={() => history.push("/tasks/" + item.id)}
+              {...item}
+            />
+          )}
+        />
       </paper>
     </>
   )
