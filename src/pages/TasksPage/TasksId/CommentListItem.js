@@ -1,11 +1,11 @@
-import React, { useState, useContext, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "reshadow/macro"
 
 import { avatar, comment } from "styles"
 import { Icon } from "components"
 import { Input, Button as AntButton, Popconfirm } from "antd"
-import { CommentContext } from "./context"
 import { formatedDate } from "services/date"
+import { method } from "services/api"
 
 const { TextArea } = Input
 
@@ -14,30 +14,44 @@ export const CommentListItem = ({
   text,
   createdAt,
   id,
-  canBeEdited
+  canBeEdited,
+  url = "",
+  update,
+  list
 }) => {
-  const [edit, setEdit] = useState("")
-  const {
-    state: { loading },
-    dispatch
-  } = useContext(CommentContext)
+  const [loading, setLoading] = useState(false)
+  const [editValue, setEditValue] = useState("")
+  const [create, setCreate] = useState(null)
+  const [deleteId, setDeleteId] = useState(null)
 
-  useEffect(() => {
-    if (!loading) {
-      setEdit("")
-    }
-  }, [loading])
-
-  const saveEdit = () => {
-    if (text === edit) return setEdit("")
-    dispatch({ type: "edit_comment", payload: { value: edit, id } })
+  const handleSave = () => {
+    if (text === editValue) return setEditValue("")
+    setCreate(editValue)
+    setLoading(true)
   }
 
-  return styled(avatar, comment)`
-    wrap {
-      align-self: center;
+  useEffect(() => {
+    if (create) {
+      method.put(url + "/" + id, JSON.stringify(create)).then(res => {
+        const editComments = list.map(item => (item.id === res.id ? res : item))
+        setLoading(false)
+        setEditValue("")
+        setCreate(null)
+        update({ comments: editComments })
+      })
     }
 
+    if (deleteId) {
+      method.delete(url + "/" + id).then(() => {
+        const deletedComments = list.filter(item => item.id !== id)
+        setDeleteId(null)
+        update({ comments: deletedComments })
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [create, deleteId])
+
+  return styled(avatar, comment)`
     Icon {
       cursor: pointer;
 
@@ -66,21 +80,21 @@ export const CommentListItem = ({
         <comment_header>
           {author} <time>{formatedDate(createdAt, { time: true })}</time>
         </comment_header>
-        {edit ? (
+        {editValue ? (
           <>
             <TextArea
               autoSize
-              value={edit}
-              onChange={e => setEdit(e.target.value)}
+              value={editValue}
+              onChange={e => setEditValue(e.target.value)}
               disabled={loading}
             />
-            <AntButton size="small" onClick={() => setEdit("")}>
+            <AntButton size="small" onClick={() => setEditValue("")}>
               Отмена
             </AntButton>
             <AntButton
               size="small"
               type="primary"
-              onClick={saveEdit}
+              onClick={handleSave}
               loading={loading}
             >
               Сохранить
@@ -90,14 +104,14 @@ export const CommentListItem = ({
           text
         )}
       </div>
-      {canBeEdited && !edit && (
+      {canBeEdited && !editValue && (
         <wrap>
-          <Icon type="edit" role="button" onClick={() => setEdit(text)} />
+          <Icon type="edit" role="button" onClick={() => setEditValue(text)} />
           <Popconfirm
             title="Вы хотите удалить комментарий?"
             cancelText="Нет"
             okText="Да"
-            onConfirm={() => dispatch({ type: "delete_comment", payload: id })}
+            onConfirm={() => setDeleteId(id)}
           >
             <Icon type="del" role="button" />
           </Popconfirm>

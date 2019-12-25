@@ -3,7 +3,7 @@ import styled, { use } from "reshadow/macro"
 import { Link } from "react-router-dom"
 
 import { method } from "services/api"
-import { tabs, paper, grid } from "styles"
+import { tabs, paper, grid, breadcrumbs } from "styles"
 import { List } from "components"
 import { Events } from "../Events"
 import { InfoListItem } from "../InfoListItem"
@@ -27,13 +27,20 @@ export const ObjectId = ({ match, location, history }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hash])
 
-  return styled(tabs, paper, grid)`
+  return styled(tabs, paper, grid, breadcrumbs)`
     Icon {
       margin-right: 8px;
     }
   `(
     <>
-      <div>breadcrumb</div>
+      <breadcrumbs>
+        <Link to="/objects">Объекты /</Link>
+        {state.street && (
+          <span>
+            {state.street}, {state.number}
+          </span>
+        )}
+      </breadcrumbs>
       {state.street ? (
         <h1>
           {state.street}, {state.number}

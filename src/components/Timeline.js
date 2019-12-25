@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "reshadow/macro"
 
+import { formatedDate } from "services/date"
 // import { useTimer } from "hooks"
 
 export const Timeline = ({ start, finish }) => {
@@ -39,7 +40,7 @@ export const Timeline = ({ start, finish }) => {
   `(
     <timeline>
       <line />
-      timer (до {new Date(finish).toLocaleDateString()})
+      до {formatedDate(finish)}
     </timeline>
   )
 }

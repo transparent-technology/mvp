@@ -16,7 +16,11 @@ export const ObjectAll = ({ history }) => {
     })
   }, [])
 
-  return styled(paper)(
+  return styled(paper)`
+    h1 {
+      margin-top: 24px;
+    }
+  `(
     <>
       <h1>Объекты</h1>
       <paper>

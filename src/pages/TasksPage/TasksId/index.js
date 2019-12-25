@@ -1,35 +1,83 @@
 import React, { useState, useEffect } from "react"
-import styled from "reshadow/macro"
+import { Link } from "react-router-dom"
+import styled, { css } from "reshadow/macro"
 
 import { method } from "services/api"
-import {
-  TasksHeader,
-  Stages,
-  TaskPanel,
-  Comments,
-  List,
-  Icon
-} from "components"
-import { paper, grid } from "styles"
+import { List, Icon, Timeline } from "components"
+import { paper, grid, breadcrumbs } from "styles"
+import { getIconProps } from "styles/helper"
 import { InfoListItem } from "./InfoListItem"
 import { DeviceListItem } from "./DeviceListItem"
-import { getIconProps } from "styles/helper"
+import { CommentListItem } from "./CommentListItem"
+import { CommentCreator } from "./CommentCreator"
+import { Panel } from "./Panel"
+import { Stages } from "./Stages"
+import { formatedDate } from "services/date"
 
-export const TasksId = ({ location, match, history }) => {
+const getCurrentPage = (props = {}) => {
+  if (props.closingTime) return "Архив"
+  if (props.userOperatingStatus === "Executor") return "К исполнению"
+  if (props.userOperatingStatus === "Observer") return "Наблюдаемые"
+  return ""
+}
+
+const taskIdStyles = css`
+  Comments {
+    margin-bottom: 24px;
+  }
+
+  grid > div {
+    display: inherit;
+    grid-gap: 24px;
+  }
+
+  title_device {
+    display: flex;
+    align-items: center;
+    justify-self: start;
+    cursor: pointer;
+
+    &:hover {
+      color: #189ee9;
+    }
+  }
+
+  taskheader {
+    color: rgba(39, 47, 90, 0.65);
+  }
+
+  row {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  Icon {
+    margin-right: 8px;
+  }
+`
+
+export const TasksId = ({ match, history }) => {
   const [loading, setLoading] = useState(true)
-  const [state, setState] = useState({ pushData: null, ...location.state })
+  const [state, setState] = useState({
+    pageUrl: `Tasks/${match.params.taskId}`
+  })
   const {
+    creationTime,
+    expectedCompletionTime,
+    name,
+    pageUrl,
     stages = [],
+    closingTime,
     currentStage = {},
     pushData,
     userOperatingStatus,
-    comments,
+    comments = [],
     device = {}
   } = state
-  console.log("state", state)
 
   useEffect(() => {
-    method.get(`Tasks/${match.params.taskId}`).then(res => {
+    method.get(pageUrl).then(res => {
       updateState(res)
       setLoading(false)
     })
@@ -39,9 +87,7 @@ export const TasksId = ({ location, match, history }) => {
   useEffect(() => {
     if (pushData) {
       console.log("push")
-      method
-        .post(`Tasks/${match.params.taskId}/PushStage`, pushData)
-        .then(updateState)
+      method.post(pageUrl + "/PushStage", pushData).then(updateState)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pushData])
@@ -50,42 +96,69 @@ export const TasksId = ({ location, match, history }) => {
     setState(state => ({ ...state, ...data }))
   }
 
-  return styled(paper, grid)`
-    Comments {
-      margin-bottom: 24px;
-    }
-
-    title_device {
-      display: flex;
-      align-items: center;
-      justify-self: start;
-      cursor: pointer;
-
-      &:hover {
-        color: #189ee9;
-      }
-    }
-
-    Icon {
-      margin-right: 8px;
-    }
-  `(
+  return styled(
+    paper,
+    grid,
+    breadcrumbs,
+    taskIdStyles
+  )(
     <>
-      <div>breadcrumb</div>
-      <TasksHeader state={state} />
-      <TaskPanel
+      {/* breadcrumbs */}
+      <breadcrumbs>
+        <Link to="/tasks">Задачи /</Link>
+        <span>{getCurrentPage({ userOperatingStatus, closingTime })}</span>
+      </breadcrumbs>
+
+      {/* header */}
+      <taskheader>
+        <h1>{closingTime ? name : currentStage.name}</h1>
+        {!closingTime && name}
+        <Timeline start={creationTime} finish={expectedCompletionTime} />
+        {currentStage && (
+          <row>
+            Времени на этап: до{" "}
+            {formatedDate(currentStage.expectedCompletionTime)}
+          </row>
+        )}
+      </taskheader>
+
+      <Panel
         currentStage={currentStage}
-        push={updateState}
+        update={updateState}
         userStatus={userOperatingStatus}
-        loading={!!stages.length}
+        loadingPage={loading}
+        url={pageUrl}
       />
       <grid>
         <div>
-          <Comments
-            url={`Tasks/${match.params.taskId}/Comments`}
-            data={comments}
-            showCreator={userOperatingStatus === "Executor"}
-          />
+          {/* comments */}
+          {closingTime && !comments.length ? null : (
+            <paper>
+              <h3>Комментарии {!!comments.length && `(${comments.length})`}</h3>
+              <List
+                loading={loading}
+                data={comments}
+                renderItem={comment => (
+                  <CommentListItem
+                    key={comment.id}
+                    update={updateState}
+                    url={pageUrl + "/Comments"}
+                    list={comments}
+                    {...comment}
+                  />
+                )}
+              />
+              {userOperatingStatus === "Executor" && (
+                <CommentCreator
+                  url={pageUrl + "/Comments"}
+                  list={comments}
+                  update={updateState}
+                />
+              )}
+            </paper>
+          )}
+
+          {/* info block */}
           <paper>
             <h3>Информация о задаче</h3>
             <List
@@ -125,6 +198,8 @@ export const TasksId = ({ location, match, history }) => {
         <Stages
           stages={stages}
           isExecutor={userOperatingStatus === "Executor"}
+          update={updateState}
+          url={pageUrl}
         />
       </grid>
     </>

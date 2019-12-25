@@ -1,9 +1,10 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import styled, { css, use } from "reshadow/macro"
 import { Button as AntButton, Modal as AntModal, Input } from "antd"
 
 import { Icon, List } from "components"
 import { paper } from "styles"
+import { method } from "services/api"
 
 const getActiveStage = items => {
   let res
@@ -15,16 +16,37 @@ const getActiveStage = items => {
   return res
 }
 
-export const Stages = ({ stages, isExecutor = false }) => {
+export const Stages = ({
+  stages,
+  isExecutor = false,
+  update = () => {},
+  url = ""
+}) => {
+  const [comment, setComment] = useState("")
+  const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
+  const [revertStage, setRevertStage] = useState(false)
   const activeStageIndex = getActiveStage(stages)
+
+  useEffect(() => {
+    if (revertStage) {
+      setLoading(true)
+      method.post(url + "/RevertStage", { comment }).then(res => {
+        setComment("")
+        setLoading(false)
+        update(res)
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revertStage])
 
   const cancel = () => {
     setVisible(false)
   }
 
   const confirm = () => {
-    console.log(1)
+    setVisible(false)
+    setRevertStage(true)
   }
 
   return styled(paper)`
@@ -42,6 +64,7 @@ export const Stages = ({ stages, isExecutor = false }) => {
             index={i}
             showRevertBtn={activeStageIndex - 1 === i && isExecutor}
             onClick={() => setVisible(true)}
+            loading={loading}
             {...item}
           />
         )}
@@ -55,7 +78,10 @@ export const Stages = ({ stages, isExecutor = false }) => {
         <div>Вы можете оставить комментарий о причине возвращения.</div>
         <div>Это позволит оператору понять причину вашего решения</div>
         <br />
-        <Input.TextArea />
+        <Input.TextArea
+          value={comment}
+          onChange={e => setComment(e.target.value)}
+        />
       </AntModal>
     </paper>
   )
@@ -148,7 +174,8 @@ const StageItem = ({
   closingTime,
   showRevertBtn,
   perpetrator = {},
-  onClick
+  onClick,
+  loading
 }) => {
   return styled(stage)(
     <stage as="li" {...use({ status })}>
@@ -172,7 +199,7 @@ const StageItem = ({
               <span>{new Date(closingTime).toLocaleDateString()}</span>
             </div>
             {showRevertBtn && (
-              <AntButton size="small" onClick={onClick}>
+              <AntButton size="small" onClick={onClick} loading={loading}>
                 Вернуть этап
               </AntButton>
             )}

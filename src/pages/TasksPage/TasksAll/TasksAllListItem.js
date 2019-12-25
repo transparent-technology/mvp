@@ -104,8 +104,8 @@ export const TasksAllListItem = ({
         <row>
           <rowitem>
             <Icon type="timer" />
-            Время на этап: timer (до{" "}
-            {formatedDate(currentStage.expectedCompletionTime)})
+            Время на этап: до{" "}
+            {formatedDate(currentStage.expectedCompletionTime)}
           </rowitem>
           {hash === "#Observing" && (
             <rowitem>

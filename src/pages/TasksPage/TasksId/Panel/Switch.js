@@ -29,7 +29,7 @@ export const Switch = ({ push }) => {
         type="primary"
         size="large"
         disabled={!nextStageId}
-        onClick={() => push({ pushData: { nextStageId } })}
+        onClick={() => push({ nextStageId })}
       >
         Завершить этап
       </Button>

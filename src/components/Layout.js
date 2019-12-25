@@ -19,7 +19,7 @@ const styles = css`
   }
 
   main {
-    padding: 24px 56px;
+    padding: 0 56px;
     display: inherit;
     grid-row-gap: 24px;
     align-content: start;

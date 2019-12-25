@@ -145,9 +145,7 @@ export const UploadDocument = ({ push }) => {
         type="primary"
         size="large"
         disabled={!items.length}
-        onClick={() =>
-          push({ pushData: { documentsIds: items.map(item => item.id) } })
-        }
+        onClick={() => push({ documentsIds: items.map(item => item.id) })}
       >
         Завершить этап
       </Button>

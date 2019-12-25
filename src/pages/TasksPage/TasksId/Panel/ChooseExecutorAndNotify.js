@@ -1,15 +1,11 @@
 import React, { useState } from "react"
 import styled from "reshadow/macro"
-import { useParams } from "react-router-dom"
 import { Button } from "antd"
 
 import { useSelect } from "hooks"
 
-export const ChooseExecutorAndSwitch = ({ push }) => {
+export const ChooseExecutorAndNotify = ({ push }) => {
   const [nextPerpetratorId, setNextPerpetratorId] = useState(null)
-  const [nextStageId, setNextStageId] = useState(null)
-
-  const { taskId } = useParams()
 
   const { select: executorSelect } = useSelect({
     url: "ManagingFirmUsers",
@@ -19,11 +15,10 @@ export const ChooseExecutorAndSwitch = ({ push }) => {
     onChange: id => setNextPerpetratorId(Number(id))
   })
 
-  const { select } = useSelect({
-    name: "Выбор дальнейшего действия",
-    url: `Tasks/${taskId}/NextStages`,
-    placeholder: "Выбирите действие",
-    onChange: id => setNextStageId(Number(id))
+  const { select: contractorsSelect } = useSelect({
+    url: "Contractors",
+    name: "Получатели пригласительного письма",
+    placeholder: "Выбирите кому отправить письмo"
   })
 
   return styled`
@@ -41,12 +36,12 @@ export const ChooseExecutorAndSwitch = ({ push }) => {
     <>
       <row>
         {executorSelect}
-        {select}
+        {contractorsSelect}
         <Button
           size="large"
           type="primary"
-          disabled={!nextPerpetratorId || !nextStageId}
-          onClick={() => push({ pushData: { nextPerpetratorId, nextStageId } })}
+          disabled={!nextPerpetratorId}
+          onClick={() => push({ nextPerpetratorId })}
         >
           Завершить этап
         </Button>

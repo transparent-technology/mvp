@@ -1,7 +1,12 @@
 import React from "react"
 import styled from "reshadow/macro"
 
-export const List = ({ data = [], loading = false, renderItem = () => {} }) => {
+export const List = ({
+  data = [],
+  loading = false,
+  renderItem = () => {},
+  ...props
+}) => {
   if (loading) return "loading"
   if (!data.length) return "empty"
   return styled`
@@ -10,5 +15,5 @@ export const List = ({ data = [], loading = false, renderItem = () => {} }) => {
       padding: 0;
       list-style: none;
     }
-  `(<ul>{data.map(renderItem)}</ul>)
+  `(<ul {...props}>{data.map(renderItem)}</ul>)
 }

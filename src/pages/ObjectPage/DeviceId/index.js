@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import styled, { use } from "reshadow/macro"
 
 import { method } from "services/api"
-import { paper, tabs, grid } from "styles"
+import { paper, tabs, grid, breadcrumbs } from "styles"
 import { Icon, List } from "components"
 import { Events } from "../Events"
 import { getIconProps } from "styles/helper"
@@ -38,7 +38,7 @@ export const DeviceId = ({ match, location, history }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hash])
 
-  return styled(paper, tabs, grid)`
+  return styled(paper, tabs, grid, breadcrumbs)`
     h1 {
       display: flex;
       align-items: center;
@@ -48,7 +48,15 @@ export const DeviceId = ({ match, location, history }) => {
     }
   `(
     <>
-      <div>breadcrumbs</div>
+      <breadcrumbs>
+        <Link to="/objects">Объекты /</Link>
+        {state.street && (
+          <Link to={"/objects/" + objectId}>
+            {state.street}, {state.number} /
+          </Link>
+        )}
+        <span>{device && device.model}</span>
+      </breadcrumbs>
       {device ? (
         <h1>
           <Icon size={32} {...getIconProps(device.resource)} />

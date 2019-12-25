@@ -11,6 +11,10 @@ export const UserSettingPage = () => {
   }, [])
 
   return styled(paper)`
+    h1 {
+      margin-top: 24px;
+    }
+
     ul {
       padding: 0;
       margin: 0;

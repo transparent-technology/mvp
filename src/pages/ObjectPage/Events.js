@@ -54,7 +54,8 @@ const EvetListItem = ({
   device,
   creationTime,
   showField,
-  onClick
+  onClick,
+  currentStage = {}
 }) => {
   return styled`
     li {
@@ -101,7 +102,9 @@ const EvetListItem = ({
       <row>
         <Icon type="timer" />
         Времени на этап: timer{" "}
-        <span {...use({ ml: true })}>(до {formatedDate()})</span>
+        <span {...use({ ml: true })}>
+          (до {formatedDate(currentStage.expectedCompletionTime)})
+        </span>
       </row>
       <row>
         <span>

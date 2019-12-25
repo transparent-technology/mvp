@@ -43,10 +43,14 @@ export const TasksAll = ({ location, history }) => {
       display: grid;
       grid-template-columns: 1fr 1fr;
       align-items: center;
+      
+      & > div {
+        justify-self: end;
+      }
     }
 
-    div {
-      justify-self: end;
+    h1 {
+      margin-top: 24px;
     }
 
     AntSelect {
@@ -103,11 +107,11 @@ export const TasksAll = ({ location, history }) => {
         <List
           loading={loading}
           data={items}
-          renderItem={item => (
+          renderItem={task => (
             <TasksAllListItem
-              key={item.id}
-              onClick={() => history.push("/tasks/" + item.id)}
-              {...item}
+              key={task.id}
+              onClick={() => history.push("/tasks/" + task.id)}
+              {...task}
             />
           )}
         />

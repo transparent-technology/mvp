@@ -76,19 +76,34 @@ export const comment = css`
   }
 `
 
-export const device_item = css`
-  device_item {
-    border-bottom: 1px solid #d9d9d9;
-    padding: 16px 0;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+// export const device_item = css`
+//   device_item {
+//     border-bottom: 1px solid #d9d9d9;
+//     padding: 16px 0;
+//     display: flex;
+//     align-items: center;
+//     cursor: pointer;
 
-    & > span {
-      display: inherit;
-      align: inherit;
-      font-size: 12px;
-      margin-left: auto;
-    }
+//     & > span {
+//       display: inherit;
+//       align: inherit;
+//       font-size: 12px;
+//       margin-left: auto;
+//     }
+//   }
+// `
+
+export const breadcrumbs = css`
+  breadcrumbs {
+    margin-top: 16px;
+    color: rgba(39, 47, 90, 0.45);
+  }
+
+  breadcrumbs > * {
+    margin-right: 4px;
+  }
+
+  breadcrumbs > span {
+    color: rgba(39, 47, 90, 0.65);
   }
 `

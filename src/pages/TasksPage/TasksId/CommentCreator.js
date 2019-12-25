@@ -1,21 +1,27 @@
-import React, { useContext, useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "reshadow/macro"
 
 import { Input, Button as AntButton } from "antd"
 import { Icon } from "components"
 import { avatar, comment } from "styles"
-import { CommentContext } from "./context"
+import { method } from "services/api"
 
-export const CommentCreator = () => {
+export const CommentCreator = ({ url, list, update }) => {
+  const [loading, setLoading] = useState(false)
   const [value, setValue] = useState("")
-  const { dispatch, state } = useContext(CommentContext)
-  const { loading } = state
+  const [createValue, setCreateValue] = useState(null)
 
   useEffect(() => {
-    if (!loading) {
-      setValue("")
+    if (createValue) {
+      setLoading(true)
+      method.post(url, JSON.stringify(createValue)).then(res => {
+        setLoading(false)
+        setValue("")
+        update({ comments: [...list, res] })
+      })
     }
-  }, [loading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createValue])
 
   return styled(avatar, comment)`
     AntButton {
@@ -37,10 +43,7 @@ export const CommentCreator = () => {
           <AntButton
             size="small"
             loading={loading}
-            onClick={() =>
-              value.trim() &&
-              dispatch({ type: "create_comment", payload: value })
-            }
+            onClick={() => value.trim() && setCreateValue(value)}
           >
             Добавить комментарии
           </AntButton>
