@@ -34,6 +34,7 @@ export const Stages = ({
       method.post(url + "/RevertStage", { comment }).then(res => {
         setComment("")
         setLoading(false)
+        setRevertStage(false)
         update(res)
       })
     }

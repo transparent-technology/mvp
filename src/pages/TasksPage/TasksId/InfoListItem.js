@@ -1,5 +1,4 @@
 import React from "react"
-import { Link } from "react-router-dom"
 import styled, { use } from "reshadow/macro"
 
 import { formatedDate } from "services/date"

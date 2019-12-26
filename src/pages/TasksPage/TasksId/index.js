@@ -6,13 +6,14 @@ import { method } from "services/api"
 import { List, Icon, Timeline } from "components"
 import { paper, grid, breadcrumbs } from "styles"
 import { getIconProps } from "styles/helper"
+import { formatedDate } from "services/date"
+import { useTimer } from "hooks"
 import { InfoListItem } from "./InfoListItem"
 import { DeviceListItem } from "./DeviceListItem"
 import { CommentListItem } from "./CommentListItem"
 import { CommentCreator } from "./CommentCreator"
 import { Panel } from "./Panel"
 import { Stages } from "./Stages"
-import { formatedDate } from "services/date"
 
 const getCurrentPage = (props = {}) => {
   if (props.closingTime) return "Архив"
@@ -59,9 +60,11 @@ const taskIdStyles = css`
 
 export const TasksId = ({ match, history }) => {
   const [loading, setLoading] = useState(true)
+
   const [state, setState] = useState({
     pageUrl: `Tasks/${match.params.taskId}`
   })
+
   const {
     creationTime,
     expectedCompletionTime,
@@ -75,6 +78,11 @@ export const TasksId = ({ match, history }) => {
     comments = [],
     device = {}
   } = state
+
+  const timer = useTimer({
+    deadline: expectedCompletionTime,
+    finishTime: closingTime
+  })
 
   useEffect(() => {
     method.get(pageUrl).then(res => {
@@ -111,15 +119,10 @@ export const TasksId = ({ match, history }) => {
 
       {/* header */}
       <taskheader>
-        <h1>{closingTime ? name : currentStage.name}</h1>
+        <h1>{closingTime ? name : currentStage.name} </h1>
         {!closingTime && name}
         <Timeline start={creationTime} finish={expectedCompletionTime} />
-        {currentStage && (
-          <row>
-            Времени на этап: до{" "}
-            {formatedDate(currentStage.expectedCompletionTime)}
-          </row>
-        )}
+        {currentStage && timer}
       </taskheader>
 
       <Panel

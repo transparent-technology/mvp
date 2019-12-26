@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { NavLink, useHistory } from "react-router-dom"
+import { NavLink, useHistory, Redirect } from "react-router-dom"
 import styled, { css } from "reshadow/macro"
 
 import logo from "assets/logo.svg"
@@ -81,9 +81,15 @@ const navlink = css`
   }
 `
 
+const getUserRole = () => {
+  const roles = JSON.parse(localStorage.getItem("roles"))
+  return roles ? roles : []
+}
+
 export const Layout = ({ children }) => {
   const [startLogout, setStartLogout] = useState(false)
   const history = useHistory()
+
   useEffect(() => {
     if (startLogout) {
       const token = JSON.parse(localStorage.getItem("token"))
@@ -94,11 +100,18 @@ export const Layout = ({ children }) => {
         history.push("/login")
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startLogout])
 
   const logout = e => {
     e.preventDefault()
     setStartLogout(true)
+  }
+
+  const isAdmin = getUserRole().includes("ManagingFirmExecutor")
+
+  if (!localStorage.getItem("token")) {
+    return <Redirect to="/login" />
   }
 
   return styled(
@@ -126,6 +139,12 @@ export const Layout = ({ children }) => {
             <Icon type="username" />
             Настройки профиля
           </NavLink>
+          {isAdmin && (
+            <NavLink to="/company" activeClassName={navlink.active}>
+              <Icon type="company" />
+              Профиль компании
+            </NavLink>
+          )}
           <NavLink
             to="/login"
             activeClassName={navlink.active}
