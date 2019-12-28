@@ -95,14 +95,20 @@ export const CompanyProfile = ({ location, history }) => {
         )}
         {hash === "#users" && (
           <>
-            <AntButton>
+            <AntButton onClick={() => history.push(pathname + "/user/create")}>
               <Icon type="plus" fill="#189EE9" />
               Добавить сотрудника
             </AntButton>
             <List
               loading={loading}
               data={users}
-              renderItem={user => <UserListItem key={user.id} {...user} />}
+              renderItem={user => (
+                <UserListItem
+                  key={user.id}
+                  {...user}
+                  onClick={() => history.push(pathname + "/user/" + user.id)}
+                />
+              )}
             />
           </>
         )}
@@ -123,7 +129,7 @@ export const CompanyProfile = ({ location, history }) => {
   )
 }
 
-const UserListItem = ({ name, cellphone }) =>
+const UserListItem = ({ name, cellphone, onClick }) =>
   styled`
     li {
       display: flex;
@@ -141,7 +147,7 @@ const UserListItem = ({ name, cellphone }) =>
       font-weight: 600;
     }
   `(
-    <li>
+    <li onClick={onClick}>
       <h4>{name}</h4>
       <span>phone</span>
     </li>
