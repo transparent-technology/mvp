@@ -8,7 +8,10 @@ import { paper, tabs, field } from "styles"
 import { Icon, List } from "components"
 
 export const CompanyProfile = ({ location, history }) => {
-  const [{ loading, users, name, phoneNumber }, setState] = useState({
+  const [
+    { loading, users, contractors, name, phoneNumber },
+    setState
+  ] = useState({
     loading: false
   })
   const { hash, pathname } = location
@@ -21,6 +24,16 @@ export const CompanyProfile = ({ location, history }) => {
       })
     }
 
+    if (hash === "#contractors" && !contractors) {
+      setState(state => ({ ...state, loading: true }))
+      method.get(`Contractors`).then(res => {
+        setState(state => ({
+          ...state,
+          contractors: res.items,
+          loading: false
+        }))
+      })
+    }
     if (hash === "" && !name) {
       setState(state => ({ ...state, loading: true }))
       method.get("ManagingFirms/current").then(res => {
@@ -114,13 +127,17 @@ export const CompanyProfile = ({ location, history }) => {
         )}
         {hash === "#contractors" && (
           <>
-            <AntButton>
+            <AntButton
+              onClick={() => history.push(pathname + "/contractor/create")}
+            >
               <Icon type="plus" fill="#189EE9" />
               Добавить подрядчика
             </AntButton>
             <List
-              data={[1, 3, 4]}
-              renderItem={user => <UserListItem key={user} />}
+              data={contractors}
+              renderItem={contractor => (
+                <UserListItem key={contractor.id} {...contractor} />
+              )}
             />
           </>
         )}

@@ -7,8 +7,8 @@ import { Input, Button as AntButton } from "antd"
 import { paper, breadcrumbs } from "styles"
 import { useInput } from "hooks"
 
-export const UserTemplate = ({ match }) => {
-  const { userId } = match.params
+export const ContractorTemplate = ({ match }) => {
+  const { contractorId } = match.params
   const [user, setUser] = useState({
     id: 7061,
     email: "",
@@ -43,14 +43,14 @@ export const UserTemplate = ({ match }) => {
   })
 
   useEffect(() => {
-    if (userId !== "create") {
-      method.get(`ManagingFirmUsers/${userId}`).then(setUser)
+    if (contractorId !== "create") {
+      method.get(`Contractors​/${contractorId}`).then(setUser)
     }
-  }, [userId])
+  }, [contractorId])
 
   useEffect(() => {
     if (changeSettings) {
-      method.put(`ManagingFirmUsers/${userId}`, user).then(console.log)
+      method.post(`Contractors​/${contractorId}`, user).then(console.log)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeSettings])
@@ -76,9 +76,9 @@ export const UserTemplate = ({ match }) => {
         <Link to="/company#users">Профиль компании</Link>
       </breadcrumbs>
       <h1>
-        {userId
+        {contractorId
           ? `${user.firstName} ${user.lastName}`
-          : "Добавление нового сотрудника"}
+          : "Добавление нового подрядчика"}
       </h1>
       <paper>
         {lastName.input}
