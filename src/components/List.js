@@ -1,14 +1,18 @@
 import React from "react"
 import styled from "reshadow/macro"
 
+import { Empty } from "components/Empty"
+import {Loader} from 'components/Loader'
+
 export const List = ({
   data = [],
   loading = false,
   renderItem = () => {},
+  emptyText="",
   ...props
 }) => {
-  if (loading) return "loading"
-  if (!data.length) return "empty"
+  if (loading) return <Loader />
+  if (!data.length) return <Empty emptyText={emptyText}/>
   return styled`
     ul {
       margin: 0;

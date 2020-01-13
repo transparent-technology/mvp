@@ -29,12 +29,15 @@ export const Events = React.memo(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deviceId])
 
+  const eventText = !deviceId ? "объектом" : "прибором"
+
   return styled(paper)(
     <paper>
-      <h3>События c {!deviceId ? "объектом" : "прибором"} </h3>
+      <h3>События c {eventText} </h3>
       <List
         loading={loading}
         data={state.items}
+        emptyText={`Нет событий с ${eventText}`}
         renderItem={item => (
           <EvetListItem
             key={item.id}

@@ -141,6 +141,7 @@ export const TasksId = ({ match, history }) => {
               <List
                 loading={loading}
                 data={comments}
+                emptyText="Комментарий еще не добавлен"
                 renderItem={comment => (
                   <CommentListItem
                     key={comment.id}
