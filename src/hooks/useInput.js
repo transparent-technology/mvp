@@ -9,7 +9,8 @@ const labels = {
   lastName: "Фамилия",
   middleName: "Отчество",
   number: "Внутренний номер сотрудника",
-  position: "Должность"
+  position: "Должность",
+  companyName: "Название"
 }
 
 export const useInput = ({

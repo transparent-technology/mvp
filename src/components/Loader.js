@@ -20,8 +20,8 @@ const loader = css`
 
   span {
     display: block;
-    width: 5px;
-    height: 5px;
+    width: 10px;
+    height: 10px;
     margin: 5px;
     border-radius: 50%;
     background-color: #189ee9;

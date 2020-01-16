@@ -7,10 +7,11 @@ import { Input, Button as AntButton } from "antd"
 import { paper, breadcrumbs } from "styles"
 import { useInput } from "hooks"
 
-export const UserTemplate = ({ match }) => {
+export const UserTemplate = ({ match, history }) => {
   const { userId } = match.params
+  console.log(userId)
   const [user, setUser] = useState({
-    id: 7061,
+    id: "",
     email: "",
     firstName: "",
     lastName: "",
@@ -50,6 +51,7 @@ export const UserTemplate = ({ match }) => {
 
   useEffect(() => {
     if (changeSettings) {
+      console.log(user)
       method.put(`ManagingFirmUsers/${userId}`, user).then(console.log)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +78,7 @@ export const UserTemplate = ({ match }) => {
         <Link to="/company#users">Профиль компании</Link>
       </breadcrumbs>
       <h1>
-        {userId
+        {userId !== "create"
           ? `${user.firstName} ${user.lastName}`
           : "Добавление нового сотрудника"}
       </h1>
@@ -103,7 +105,9 @@ export const UserTemplate = ({ match }) => {
           >
             Сохранить
           </AntButton>
-          <AntButton size="large">Отмена</AntButton>
+          <AntButton size="large" onClick={() => history.goBack()}>
+            Отмена
+          </AntButton>
         </div>
       </paper>
     </>

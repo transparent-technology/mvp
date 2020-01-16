@@ -94,7 +94,6 @@ export const Layout = ({ children }) => {
     if (startLogout) {
       const token = JSON.parse(localStorage.getItem("token"))
       const refreshToken = JSON.parse(localStorage.getItem("refreshToken"))
-      console.log(token, refreshToken)
       method.post("Auth/logout", { token, refreshToken }).then(() => {
         localStorage.clear()
         history.push("/login")
@@ -108,7 +107,7 @@ export const Layout = ({ children }) => {
     setStartLogout(true)
   }
 
-  const isAdmin = getUserRole().includes("ManagingFirmExecutor")
+  const isAdmin = getUserRole().includes("ManagingFirmAdministrator")
 
   if (!localStorage.getItem("token")) {
     return <Redirect to="/login" />

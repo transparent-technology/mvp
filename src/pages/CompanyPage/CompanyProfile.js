@@ -43,7 +43,6 @@ export const CompanyProfile = ({ location, history }) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hash])
-  console.log(users)
 
   return styled(paper, tabs, field)`
     h1 {

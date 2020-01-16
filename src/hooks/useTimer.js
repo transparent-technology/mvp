@@ -21,7 +21,7 @@ export const useTimer = ({ deadline = null, finishTime = null } = {}) => {
   if (!deadline && !finishTime) {
     return <span>загрузка</span>
   } else if (finishTime) {
-    const diffInTime = new Date(deadline) - new Date(finishTime)
+    // const diffInTime = new Date(deadline) - new Date(finishTime)
     return <span>загрузк...</span>
   } else {
     const diffInTime = new Date(deadline) - Date.now()
