@@ -3,9 +3,10 @@ import styled from "reshadow/macro"
 import { Link } from "react-router-dom"
 
 import { method } from "services/api"
-import { Input, Button as AntButton } from "antd"
+import { Button as AntButton } from "antd"
 import { paper, breadcrumbs } from "styles"
 import { useInput } from "hooks"
+import { Input } from "components"
 
 export const UserTemplate = ({ match, history }) => {
   const { userId } = match.params
@@ -83,7 +84,9 @@ export const UserTemplate = ({ match, history }) => {
           : "Добавление нового сотрудника"}
       </h1>
       <paper>
-        {lastName.input}
+        <input />
+        {/* <Input /> */}
+        {/* {lastName.input}
         {firstName.input}
         {middleName.input}
         {department.input}
@@ -93,10 +96,20 @@ export const UserTemplate = ({ match, history }) => {
         {cellphone.input}
         <label>
           <span>Роль в системе</span>
-          <Input size="large" />
         </label>
         {password.input}
-        {passwordRepeat.input}
+        {passwordRepeat.input} */}
+        {/* <Input />
+        <Input />
+        <Input />
+        <Input />
+        <Input />
+        <Input />
+        <Input />
+        <Input />
+        <Input />
+        <Input />
+        <Input /> */}
         <div>
           <AntButton
             size="large"
