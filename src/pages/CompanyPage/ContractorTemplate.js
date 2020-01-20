@@ -56,6 +56,7 @@ export const ContractorTemplate = ({ match }) => {
           : "Добавление нового подрядчика"}
       </h1>
       <paper>
+        
         {companyName.input}
         {/* {email} */}
         <div>
