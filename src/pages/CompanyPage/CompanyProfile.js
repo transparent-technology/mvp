@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useContext } from "react"
 import { Link } from "react-router-dom"
 import styled, { use } from "reshadow/macro"
 
@@ -6,38 +6,43 @@ import { Button as AntButton } from "antd"
 import { method } from "services/api"
 import { paper, tabs, field } from "styles"
 import { Icon, List } from "components"
+import { CompanyPageContext } from "./index"
+
+const createUlr = location => {
+  const { hash, pathname } = location
+  switch (hash) {
+    case "#users":
+      return pathname + "/user/create"
+    default:
+      return pathname + "/contractor/create"
+  }
+}
 
 export const CompanyProfile = ({ location, history }) => {
-  const [
-    { loading, users, contractors, name, phoneNumber },
-    setState
-  ] = useState({
-    loading: false
-  })
   const { hash, pathname } = location
+  const { state, dispatch } = useContext(CompanyPageContext)
+  const { companyInfo, users, contractors, loading } = state
+
+  // console.log(contractors)
 
   useEffect(() => {
+    if (hash === "" && !companyInfo) {
+      method.get("ManagingFirms/current").then(companyInfo => {
+        dispatch({ type: "GET_STATE", payload: { companyInfo } })
+      })
+    }
+
     if (hash === "#users" && !users) {
-      setState(state => ({ ...state, loading: true }))
-      method.get(`ManagingFirmUsers`).then(res => {
-        setState(state => ({ ...state, users: res.items, loading: false }))
+      method.get("ManagingFirmUsers").then(data => {
+        const { items: users } = data
+        dispatch({ type: "GET_STATE", payload: { users } })
       })
     }
 
     if (hash === "#contractors" && !contractors) {
-      setState(state => ({ ...state, loading: true }))
-      method.get(`Contractors`).then(res => {
-        setState(state => ({
-          ...state,
-          contractors: res.items,
-          loading: false
-        }))
-      })
-    }
-    if (hash === "" && !name) {
-      setState(state => ({ ...state, loading: true }))
-      method.get("ManagingFirms/current").then(res => {
-        setState(state => ({ ...state, ...res, loading: false }))
+      method.get("Contractors").then(data => {
+        const { items: contractors } = data
+        dispatch({ type: "GET_STATE", payload: { contractors } })
       })
     }
 
@@ -89,15 +94,21 @@ export const CompanyProfile = ({ location, history }) => {
             Подрядчики
           </Link>
         </tabs>
+        {hash !== "" && (
+          <AntButton onClick={() => history.push(createUlr(location))}>
+            <Icon type="plus" fill="#189EE9" />
+            Добавить {hash === "#users" ? "сотрудника" : "подрядчика"}
+          </AntButton>
+        )}
         {hash === "" && (
           <grid>
             <label>
               <span>Название компании</span>
-              <field>{name ? name : "loading..."}</field>
+              <field>{companyInfo && companyInfo.name}</field>
             </label>
             <label>
               <span>Телефон</span>
-              <field>{phoneNumber}</field>
+              <field>{companyInfo && companyInfo.phoneNumber}</field>
             </label>
             <label>
               <span>Часовой пояс</span>
@@ -107,13 +118,9 @@ export const CompanyProfile = ({ location, history }) => {
         )}
         {hash === "#users" && (
           <>
-            <AntButton onClick={() => history.push(pathname + "/user/create")}>
-              <Icon type="plus" fill="#189EE9" />
-              Добавить сотрудника
-            </AntButton>
             <List
               loading={loading}
-              data={users}
+              data={users || []}
               renderItem={user => (
                 <UserListItem
                   key={user.id}
@@ -126,16 +133,17 @@ export const CompanyProfile = ({ location, history }) => {
         )}
         {hash === "#contractors" && (
           <>
-            <AntButton
-              onClick={() => history.push(pathname + "/contractor/create")}
-            >
-              <Icon type="plus" fill="#189EE9" />
-              Добавить подрядчика
-            </AntButton>
             <List
-              data={contractors}
+              loading={loading}
+              data={contractors || []}
               renderItem={contractor => (
-                <UserListItem key={contractor.id} {...contractor} />
+                <UserListItem
+                  key={contractor.id}
+                  onClick={() =>
+                    history.push(pathname + "/contractor/" + contractor.id)
+                  }
+                  {...contractor}
+                />
               )}
             />
           </>

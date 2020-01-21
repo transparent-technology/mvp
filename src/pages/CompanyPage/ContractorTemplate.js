@@ -3,38 +3,49 @@ import styled from "reshadow/macro"
 import { Link } from "react-router-dom"
 
 import { method } from "services/api"
-import { Button as AntButton } from "antd"
+import { Button as AntButton, Input } from "antd"
 import { paper, breadcrumbs } from "styles"
-import { useInput } from "hooks"
 
-export const ContractorTemplate = ({ match }) => {
+export const ContractorTemplate = ({ match, history }) => {
   const { contractorId } = match.params
-  const [user, setUser] = useState({
+  const [contractor, setContractor] = useState({
     id: "",
     email: "",
     name: ""
   })
-  const [changeSettings, setChangeSettings] = useState(false)
-
-  const companyName = useInput({ name: "companyName", value: user.name })
-  // const email = useInput({ name: "email", value: user.email })
+  const [create, setCreate] = useState(false)
+  const isCreate = contractorId === "create"
 
   useEffect(() => {
     if (contractorId !== "create") {
-      method.get(`Contractors​/${contractorId}`).then(setUser)
+      method.get(`Contractors/${contractorId}`).then(setContractor)
     }
   }, [contractorId])
 
   useEffect(() => {
-    if (changeSettings) {
-      method.post(`Contractors​/${contractorId}`, user).then(console.log)
+    if (create) {
+      method.post(`Contractors`, create).then(console.log)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [changeSettings])
+  }, [create])
+
+  const handleChange = e => {
+    setContractor({
+      ...contractor,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    setCreate({ name: contractor.name, email: contractor.email })
+  }
 
   return styled(paper, breadcrumbs)`
-    paper {
+    form {
+      display: grid;
       grid-template-columns: 1fr 1fr 1fr;
+      grid-gap: 32px;
 
       & > :first-child,
       & > :last-child {
@@ -48,27 +59,43 @@ export const ContractorTemplate = ({ match }) => {
   `(
     <>
       <breadcrumbs>
-        <Link to="/company#users">Профиль компании</Link>
+        <Link to="/company#contractors">Профиль компании</Link>
       </breadcrumbs>
-      <h1>
-        {contractorId !== "create"
-          ? `${user.firstName} ${user.lastName}`
-          : "Добавление нового подрядчика"}
-      </h1>
+      <h1>{isCreate ? "Добавление нового подрядчика" : contractor.name}</h1>
       <paper>
-        
-        {companyName.input}
-        {/* {email} */}
-        <div>
-          <AntButton
-            size="large"
-            type="primary"
-            onClick={() => setChangeSettings(true)}
-          >
-            Сохранить
-          </AntButton>
-          <AntButton size="large">Отмена</AntButton>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <label>
+            <span>Название</span>
+            <Input
+              size="large"
+              name="name"
+              value={contractor.name}
+              onChange={handleChange}
+            />
+          </label>
+          <label>
+            <span>Адрес элестронной почты (логин)</span>
+            <Input
+              size="large"
+              name="email"
+              value={contractor.email}
+              onChange={handleChange}
+            />
+          </label>
+          <div>
+            <AntButton
+              size="large"
+              type="primary"
+              htmlType="submit"
+              // disabled={!create}
+            >
+              Сохранить
+            </AntButton>
+            <AntButton size="large" onClick={() => history.goBack()}>
+              Отмена
+            </AntButton>
+          </div>
+        </form>
       </paper>
     </>
   )
