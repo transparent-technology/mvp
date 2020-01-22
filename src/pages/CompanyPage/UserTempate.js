@@ -1,69 +1,114 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import styled from "reshadow/macro"
 import { Link } from "react-router-dom"
 
 import { method } from "services/api"
-import { Button as AntButton } from "antd"
+import { Button as AntButton, Input, Select as AntSelect } from "antd"
 import { paper, breadcrumbs } from "styles"
-import { useInput } from "hooks"
-import { Input } from "components"
+
+import { CompanyPageContext } from "./index"
+
+const { Option } = AntSelect
+
+const initialState = {
+  lastName: "",
+  firstName: "",
+  middleName: "",
+  depatment: "",
+  position: "",
+  number: "",
+  cellnumber: "",
+  email: ""
+}
+
+const fields = [
+  { name: "lastName", label: "Фамилия" },
+  { name: "firstName", label: "Имя" },
+  { name: "middleName", label: "Отчество" },
+  { name: "depatment", label: "Отдел" },
+  { name: "position", label: "Должность" },
+  { name: "number", label: "Внутренний номер сотрудника" },
+  { name: "email", label: "Адрес электронной почты (логин)" },
+  { name: "cellnumber", label: "Контактный номер" }
+]
 
 export const UserTemplate = ({ match, history }) => {
-  const { userId } = match.params
-  console.log(userId)
-  const [user, setUser] = useState({
-    id: "",
-    email: "",
-    firstName: "",
-    lastName: "",
-    middleName: "",
-    cellphone: "",
-    department: "",
-    position: "",
-    number: "",
-    userRoles: []
-  })
-  const [changeSettings, setChangeSettings] = useState(false)
-
-  const lastName = useInput({ name: "lastName", value: user.lastName })
-  const firstName = useInput({ name: "firstName", value: user.firstName })
-  const middleName = useInput({ name: "middleName", value: user.middleName })
-  const department = useInput({ name: "department", value: user.department })
-  const position = useInput({ name: "position", value: user.position })
-  const number = useInput({ name: "number", value: user.number })
-  const email = useInput({ name: "email", value: user.email })
-  const cellphone = useInput({ name: "cellphone", value: user.cellphone })
-  const password = useInput({
-    name: "password",
-    value: user.password,
-    label: "Пароль"
-  })
-  const passwordRepeat = useInput({
-    name: "password",
-    value: user.password,
-    label: "Повторите пароль"
-  })
+  const isCreate = match.params.userId === "create"
+  const { state, dispatch } = useContext(CompanyPageContext)
+  const [values, setValues] = useState(initialState)
+  const [touched, setTouched] = useState(false)
+  const [createData, setCreateData] = useState(null)
+  const [putData, setPutData] = useState(null)
 
   useEffect(() => {
-    if (userId !== "create") {
-      method.get(`ManagingFirmUsers/${userId}`).then(setUser)
+    if (!isCreate) {
+      method.get("ManagingFirmUsers/" + match.params.userId).then(data => {
+        console.log(data)
+        setValues(data)
+      })
     }
-  }, [userId])
+
+    method.get("UserRoles").then(data => {
+      localStorage.setItem("userRoles", JSON.stringify(data.items))
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // useEffect(() => {
+  //   if (createData) {
+  //     method.post("Contractors", createData).then(newItem => {
+  //       if (state.contractors.length) {
+  //         dispatch({
+  //           type: "ADD_NEW_ITEM",
+  //           payload: { array: "contractors", newItem }
+  //         })
+  //       }
+  //       history.push("/company#contractors")
+  //     })
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [createData])
 
   useEffect(() => {
-    if (changeSettings) {
-      console.log(user)
-      method.put(`ManagingFirmUsers/${userId}`, user).then(console.log)
+    if (putData) {
+      const { id, ...data } = values
+      method
+        .put("ManagingFirmUsers/" + match.params.userId, { ...data })
+        .then(item => {
+          dispatch({
+            type: "ADD_EDIT_ITEM",
+            payload: { array: "contractors", item }
+          })
+          setTouched(false)
+          history.push("/company#contractors")
+        })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [changeSettings])
+  }, [putData])
 
-  console.log(lastName.get())
+  const handleSubmit = e => {
+    e.preventDefault()
+    isCreate ? setCreateData(values) : setPutData(values)
+  }
+
+  const handleChange = e => {
+    console.log(e.target.name)
+    setValues({ ...values, [e.target.name]: e.target.value })
+    if (!isCreate && !touched) setTouched(true)
+  }
+
+  const isDidabled = () => {
+    if (isCreate) {
+      return !values.name || !values.email
+    }
+    return !touched
+  }
 
   return styled(paper, breadcrumbs)`
-    paper {
-      grid-template-columns: 1fr 1fr 1fr;
+    form {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: inherit;
 
       & > :nth-child(9),
       & > :last-child {
@@ -80,49 +125,44 @@ export const UserTemplate = ({ match, history }) => {
         <Link to="/company#users">Профиль компании</Link>
       </breadcrumbs>
       <h1>
-        {userId !== "create"
-          ? `${user.firstName} ${user.lastName}`
-          : "Добавление нового сотрудника"}
+        {isCreate
+          ? "Добавление пользователя"
+          : `${values.lastName} ${values.firstName}`}
       </h1>
       <paper>
-        <input />
-        {/* <Input /> */}
-        {/* {lastName.input}
-        {firstName.input}
-        {middleName.input}
-        {department.input}
-        {position.input}
-        {number.input}
-        {email.input}
-        {cellphone.input}
-        <label>
-          <span>Роль в системе</span>
-        </label>
-        {password.input}
-        {passwordRepeat.input} */}
-        {/* <Input />
-        <Input />
-        <Input />
-        <Input />
-        <Input />
-        <Input />
-        <Input />
-        <Input />
-        <Input />
-        <Input />
-        <Input /> */}
-        <div>
-          <AntButton
-            size="large"
-            type="primary"
-            onClick={() => setChangeSettings(true)}
-          >
-            Сохранить
-          </AntButton>
-          <AntButton size="large" onClick={() => history.goBack()}>
-            Отмена
-          </AntButton>
-        </div>
+        <form onSubmit={handleSubmit}>
+          {fields.map(field => (
+            <label key={field.name}>
+              <span>{field.label}</span>
+              <Input
+                size="large"
+                name={field.name}
+                value={values[field.name]}
+                onChange={handleChange}
+              />
+            </label>
+          ))}
+          <label>
+            <span>Роль в системе</span>
+            <AntSelect size="large"></AntSelect>
+          </label>
+          <div>
+            <AntButton
+              size="large"
+              type="primary"
+              htmlType="submit"
+              disabled={isDidabled()}
+            >
+              Сохранить
+            </AntButton>
+            <AntButton
+              size="large"
+              onClick={() => history.replace("/company#users")}
+            >
+              Отмена
+            </AntButton>
+          </div>
+        </form>
       </paper>
     </>
   )

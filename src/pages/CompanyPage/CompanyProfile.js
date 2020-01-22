@@ -32,14 +32,14 @@ export const CompanyProfile = ({ location, history }) => {
       })
     }
 
-    if (hash === "#users" && !users) {
+    if (hash === "#users" && !users.length) {
       method.get("ManagingFirmUsers").then(data => {
         const { items: users } = data
         dispatch({ type: "GET_STATE", payload: { users } })
       })
     }
 
-    if (hash === "#contractors" && !contractors) {
+    if (hash === "#contractors" && !contractors.length) {
       method.get("Contractors").then(data => {
         const { items: contractors } = data
         dispatch({ type: "GET_STATE", payload: { contractors } })
@@ -153,7 +153,7 @@ export const CompanyProfile = ({ location, history }) => {
   )
 }
 
-const UserListItem = ({ name, cellphone, onClick }) =>
+const UserListItem = ({ name, span, onClick }) =>
   styled`
     li {
       display: flex;

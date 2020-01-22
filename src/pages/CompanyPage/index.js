@@ -9,17 +9,27 @@ export const CompanyPageContext = createContext()
 
 const initialState = {
   companyInfo: null,
-  contractors: null,
-  users: null,
+  contractors: [],
+  users: [],
   loading: false
 }
 
 export const CompanyPage = ({ match }) => {
   const [state, dispatch] = useReducer((state, action) => {
-    switch (action.type) {
+    const { type, payload } = action
+    switch (type) {
       case "GET_STATE":
-        return { ...state, ...action.payload }
-
+        return { ...state, ...payload }
+      case "ADD_NEW_ITEM":
+        return {
+          ...state,
+          contractors: [...state[payload.array], payload.newItem]
+        }
+      case "ADD_EDIT_ITEM":
+        const editAray = state[payload.array].map(item =>
+          item.id === payload.item.id ? payload.item : item
+        )
+        return { ...state, [payload.array]: editAray }
       default:
         return state
     }
