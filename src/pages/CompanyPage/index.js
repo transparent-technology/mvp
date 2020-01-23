@@ -11,6 +11,7 @@ const initialState = {
   companyInfo: null,
   contractors: [],
   users: [],
+  roles: [],
   loading: false
 }
 

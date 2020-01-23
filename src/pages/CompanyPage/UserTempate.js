@@ -36,21 +36,29 @@ export const UserTemplate = ({ match, history }) => {
   const isCreate = match.params.userId === "create"
   const { state, dispatch } = useContext(CompanyPageContext)
   const [values, setValues] = useState(initialState)
+  const [userRoles, setUserRoles] = useState([])
   const [touched, setTouched] = useState(false)
   const [createData, setCreateData] = useState(null)
   const [putData, setPutData] = useState(null)
 
   useEffect(() => {
-    if (!isCreate) {
-      method.get("ManagingFirmUsers/" + match.params.userId).then(data => {
-        console.log(data)
-        setValues(data)
+    if (!state.roles.length) {
+      method.get("UserRoles").then(data => {
+        dispatch({ type: "GET_STATE", payload: { roles: data.items } })
       })
     }
 
-    method.get("UserRoles").then(data => {
-      localStorage.setItem("userRoles", JSON.stringify(data.items))
-    })
+    if (!isCreate) {
+      method.get("ManagingFirmUsers/" + match.params.userId).then(data => {
+        console.log(data)
+        const { managementFirm, ...values } = data
+
+        const userRoles = state.roles.map(item => "q")
+        setUserRoles(userRoles)
+        setValues(values)
+      })
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -144,7 +152,18 @@ export const UserTemplate = ({ match, history }) => {
           ))}
           <label>
             <span>Роль в системе</span>
-            <AntSelect size="large"></AntSelect>
+            <AntSelect
+              size="large"
+              mode="multiple"
+              placeholder="Выберите роль пользователя в системе"
+              defaultValue={[]}
+              labelInValue
+              onChange={e => console.log(e)}
+            >
+              {state.roles.map(item => (
+                <Option key={item.id}>{item.name}</Option>
+              ))}
+            </AntSelect>
           </label>
           <div>
             <AntButton
