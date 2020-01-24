@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import styled, { css } from "reshadow/macro"
 
+import { formatedDate } from "services/date"
 import { method } from "services/api"
 import { List, Icon, Timeline } from "components"
 import { paper, grid, breadcrumbs } from "styles"
 import { getIconProps } from "styles/helper"
-import { useTimer } from "hooks"
+import { useTimer, useTimeline } from "hooks"
 import { InfoListItem } from "./InfoListItem"
 import { DeviceListItem } from "./DeviceListItem"
 import { CommentListItem } from "./CommentListItem"
@@ -77,9 +78,10 @@ export const TasksId = ({ match, history }) => {
     comments = [],
     device = {}
   } = state
+  console.log(currentStage)
 
   const timer = useTimer({
-    deadline: expectedCompletionTime,
+    deadline: currentStage.expectedCompletionTime,
     finishTime: closingTime
   })
 

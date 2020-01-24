@@ -62,20 +62,20 @@ export const UserTemplate = ({ match, history }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // useEffect(() => {
-  //   if (createData) {
-  //     method.post("Contractors", createData).then(newItem => {
-  //       if (state.contractors.length) {
-  //         dispatch({
-  //           type: "ADD_NEW_ITEM",
-  //           payload: { array: "contractors", newItem }
-  //         })
-  //       }
-  //       history.push("/company#contractors")
-  //     })
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [createData])
+  useEffect(() => {
+    if (createData) {
+      method.post("ManagingFirmUsers", createData).then(newItem => {
+        if (state.contractors.length) {
+          dispatch({
+            type: "ADD_NEW_ITEM",
+            payload: { array: "contractors", newItem }
+          })
+        }
+        history.push("/company#contractors")
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createData])
 
   useEffect(() => {
     if (putData) {
@@ -105,9 +105,22 @@ export const UserTemplate = ({ match, history }) => {
     if (!isCreate && !touched) setTouched(true)
   }
 
+  const handleChangeSelect = id => {
+    console.log(id)
+  }
+
   const isDidabled = () => {
     if (isCreate) {
-      return !values.name || !values.email
+      return (
+        !values.lastName ||
+        !values.firstName ||
+        !values.middleName ||
+        !values.email ||
+        !values.depatment ||
+        !values.position ||
+        !values.number ||
+        !values.cellnumber
+      )
     }
     return !touched
   }
@@ -158,7 +171,7 @@ export const UserTemplate = ({ match, history }) => {
               placeholder="Выберите роль пользователя в системе"
               defaultValue={[]}
               labelInValue
-              onChange={e => console.log(e)}
+              onChange={handleChangeSelect}
             >
               {state.roles.map(item => (
                 <Option key={item.id}>{item.name}</Option>

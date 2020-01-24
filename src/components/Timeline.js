@@ -7,8 +7,12 @@ import { formatedDate } from "services/date"
 export const Timeline = ({ start, finish }) => {
   const startDate = new Date(start).getTime()
   const finishDate = new Date(finish).getTime()
-  let percent = ((Date.now() - startDate) / (finishDate - startDate)) * 100
+  let percent =
+    Math.abs((Date.now() - startDate) / (finishDate - startDate)) * 100
   if (percent >= 100) percent = 100
+
+  const colorLine =
+    percent < 50 ? "#17B45A" : percent < 80 ? " #FF8413" : "#FF2F13"
 
   return styled`
     timeline {
@@ -28,7 +32,7 @@ export const Timeline = ({ start, finish }) => {
       &::before {
         content: '';
         display: block;
-        background: #ED3B45;
+        background: ${colorLine};
         width: ${percent + "%"};
         border-radius: inherit;
         height: 100%;

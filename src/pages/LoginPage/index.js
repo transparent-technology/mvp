@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react"
 import styled from "reshadow/macro"
 
-import Input from "antd/es/input"
-import Button from "antd/es/button"
+import { Input, Button } from "antd"
+
+import sqr_bl from "assets/sqr_bl.svg"
+import sqr_gr from "assets/sqr_gr.svg"
+import logo from "assets/logo.svg"
+import logo_text from "assets/logo_text.svg"
 
 import { auth } from "services/api"
 
@@ -31,9 +35,13 @@ export const LoginPage = ({ history }) => {
   }
 
   return styled`
-  loginpage {
-    heigth: 100vh;
-    padding-top: 15vh;
+    loginpage {
+      height: 100vh;
+      padding-top: 15vh;
+      background: ${`url(${sqr_bl})`} no-repeat,
+      ${`url(${sqr_gr})`} no-repeat bottom right;
+      background-color: ${p => p.theme.bg.main};
+      position: relative;
     }
 
     h1{ 
@@ -52,6 +60,18 @@ export const LoginPage = ({ history }) => {
 
     Button {
       margin-top: 8px;
+    }
+
+    logo {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      top: 60px;
+      left: 90px;
+
+      & img {
+        margin-left: 16px;
+      }
     }
   `(
     <loginpage>
@@ -84,6 +104,10 @@ export const LoginPage = ({ history }) => {
           Вход в систему
         </Button>
       </form>
+      <logo>
+        <img src={logo} alt="logo" />
+        <img src={logo_text} alt="discription logo" className="logo_text" />
+      </logo>
     </loginpage>
   )
 }

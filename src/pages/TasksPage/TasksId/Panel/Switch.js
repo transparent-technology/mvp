@@ -12,7 +12,7 @@ export const Switch = ({ push }) => {
   const { select } = useSelect({
     name: "Выбор дальнейшего действия",
     url: `Tasks/${taskId}/NextStages`,
-    placeholder: "Выбирите действие",
+    placeholder: "Выберите действие",
     onChange: id => setNextStageId(Number(id))
   })
   return styled`

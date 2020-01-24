@@ -10,7 +10,7 @@ export const ChooseExecutorAndNotify = ({ push }) => {
   const { select: executorSelect } = useSelect({
     url: "ManagingFirmUsers",
     name: "Исполнитель",
-    placeholder: "Выбирите исполнителя",
+    placeholder: "Выбeрите исполнителя",
     taskCount: true,
     onChange: id => setNextPerpetratorId(Number(id))
   })
@@ -18,7 +18,7 @@ export const ChooseExecutorAndNotify = ({ push }) => {
   const { select: contractorsSelect } = useSelect({
     url: "Contractors",
     name: "Получатели пригласительного письма",
-    placeholder: "Выбирите кому отправить письмo"
+    placeholder: "Выбeрите кому отправить письмo"
   })
 
   return styled`

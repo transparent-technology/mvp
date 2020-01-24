@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import styled, { use } from "reshadow/macro"
 
+import { formatedDate } from "services/date"
 import { method } from "services/api"
 import { paper, tabs, grid, breadcrumbs } from "styles"
 import { Icon, List } from "components"
@@ -10,6 +11,12 @@ import { getIconProps } from "styles/helper"
 import { InfoListItem } from "../InfoListItem"
 import { DeviceListItem } from "../DeviceListItem"
 import { PipeListItem } from "../PipeListItem"
+
+const translateType = {
+  Calculator: "Вычислитель",
+  FlowMeter: "Расходомер",
+  TemperatureSensor: "Термодатчик"
+}
 
 export const DeviceId = ({ match, location, history }) => {
   const { hash } = location
@@ -106,9 +113,42 @@ export const DeviceId = ({ match, location, history }) => {
                 ],
                 ["Диаметр", "diameter"]
               ]}
-              renderItem={item => (
-                <InfoListItem key={item[0]} title={item[0]} value={item[1]} />
-              )}
+              renderItem={item => {
+                switch (item[2]) {
+                  case "date":
+                    return (
+                      <InfoListItem
+                        key={item[0]}
+                        title={item[0]}
+                        value={formatedDate(device[item[1]])}
+                      />
+                    )
+                  case "type":
+                    return (
+                      <InfoListItem
+                        key={item[0]}
+                        title={item[0]}
+                        value={translateType[device[item[1]]]}
+                      />
+                    )
+                  default:
+                    return device[item[1]] ? (
+                      <InfoListItem
+                        key={item[0]}
+                        title={item[0]}
+                        value={device[item[1]]}
+                      />
+                    ) : null
+                  // default:
+                  //   return (
+                  //     <InfoListItem
+                  //       key={item[0]}
+                  //       title={item[0]}
+                  //       value={device[item[1]]}
+                  //     />
+                  //   )
+                }
+              }}
             />
           )}
           {hash === "#CommunicationPipes" && (

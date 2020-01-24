@@ -1,7 +1,9 @@
 import axios from "axios"
 
+const server = process.env.NODE_ENV === "production" ? "production" : "staging"
+
 export const auth = axios.create({
-  baseURL: "https://transparent-production.herokuapp.com/api/Auth"
+  baseURL: `https://transparent-${server}.herokuapp.com/api/Auth`
 })
 
 auth.interceptors.response.use(res => {
@@ -16,7 +18,7 @@ auth.interceptors.response.use(res => {
 }, Promise.reject)
 
 export const method = axios.create({
-  baseURL: "https://transparent-production.herokuapp.com/api",
+  baseURL: `https://transparent-${server}.herokuapp.com/api`,
   headers: { "Content-Type": "application/json" }
 })
 

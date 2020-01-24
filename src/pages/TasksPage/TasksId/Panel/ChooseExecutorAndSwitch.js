@@ -14,7 +14,7 @@ export const ChooseExecutorAndSwitch = ({ push }) => {
   const { select: executorSelect } = useSelect({
     url: "ManagingFirmUsers",
     name: "Исполнитель",
-    placeholder: "Выбирите исполнителя",
+    placeholder: "Выберите исполнителя",
     taskCount: true,
     onChange: id => setNextPerpetratorId(Number(id))
   })
@@ -22,7 +22,7 @@ export const ChooseExecutorAndSwitch = ({ push }) => {
   const { select } = useSelect({
     name: "Выбор дальнейшего действия",
     url: `Tasks/${taskId}/NextStages`,
-    placeholder: "Выбирите действие",
+    placeholder: "Выберите действие",
     onChange: id => setNextStageId(Number(id))
   })
 
