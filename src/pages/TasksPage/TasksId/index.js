@@ -80,8 +80,14 @@ export const TasksId = ({ match, history }) => {
   } = state
   console.log(currentStage)
 
+  const timeline = useTimeline({
+    expectedCompletionTime,
+    closingTime,
+    creationTime
+  })
+
   const timer = useTimer({
-    deadline: currentStage.expectedCompletionTime,
+    deadline: currentStage ? currentStage.expectedCompletionTime : "",
     finishTime: closingTime
   })
 
@@ -122,7 +128,7 @@ export const TasksId = ({ match, history }) => {
       <taskheader>
         <h1>{closingTime ? name : currentStage.name} </h1>
         {!closingTime && name}
-        <Timeline start={creationTime} finish={expectedCompletionTime} />
+        {timeline}
         {currentStage && timer}
       </taskheader>
 

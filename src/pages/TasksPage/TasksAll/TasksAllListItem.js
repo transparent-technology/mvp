@@ -2,6 +2,7 @@ import React from "react"
 import styled, { use, css } from "reshadow/macro"
 import { useHistory } from "react-router-dom"
 
+import { useTimeline } from "hooks"
 import { formatedDate } from "services/date"
 import { Icon, Device, Timeline } from "components"
 
@@ -80,14 +81,20 @@ export const TasksAllListItem = ({
   closingTime,
   address,
   perpetrator,
-  currentStage,
+  currentStage = {},
   onClick,
   hash
 }) => {
+  const timeline = useTimeline({
+    expectedCompletionTime,
+    creationTime,
+    closingTime
+  })
+
   return styled(tasksItemStyle)(
     <listitem as="li" onClick={onClick}>
-      {!closingTime ? (
-        <Timeline finish={expectedCompletionTime} start={creationTime} />
+      {/* {!closingTime ? (
+        timeline
       ) : (
         <row>
           <rowitem>
@@ -95,7 +102,8 @@ export const TasksAllListItem = ({
             Выполненно за 12д 14ч
           </rowitem>
         </row>
-      )}
+      )} */}
+      {timeline}
       <row>
         <h4>{currentStage ? currentStage.name : name}</h4>
         {!closingTime && name}
