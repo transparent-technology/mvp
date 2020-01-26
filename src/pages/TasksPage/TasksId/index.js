@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import styled, { css } from "reshadow/macro"
 
-import { formatedDate } from "services/date"
+import { formatedDate, transformDate } from "services/date"
 import { method } from "services/api"
-import { List, Icon, Timeline } from "components"
+import { List, Icon } from "components"
 import { paper, grid, breadcrumbs } from "styles"
 import { getIconProps } from "styles/helper"
 import { useTimer, useTimeline } from "hooks"
@@ -55,6 +55,9 @@ const taskIdStyles = css`
 
   Icon {
     margin-right: 8px;
+  }
+  spantime {
+    margin-left: 8px;
   }
 `
 
@@ -129,7 +132,15 @@ export const TasksId = ({ match, history }) => {
         <h1>{closingTime ? name : currentStage.name} </h1>
         {!closingTime && name}
         {timeline}
-        {currentStage && timer}
+        {!closingTime && (
+          <row>
+            <Icon type="timer" />
+            <span>Времени на этап:</span>
+            <spantime>
+              {formatedDate(currentStage.expectedCompletionTime)}
+            </spantime>
+          </row>
+        )}
       </taskheader>
 
       <Panel

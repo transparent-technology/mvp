@@ -89,7 +89,7 @@ const EvetListItem = ({
     }
 
     span {
-      color: rgba(39, 47, 90, 0.45);
+      color: rgba(39, 47, 90, 0.65);
     }
 
     span + span {
@@ -104,9 +104,9 @@ const EvetListItem = ({
       <h4>{name}</h4>
       <row>
         <Icon type="timer" />
-        Времени на этап: timer{" "}
+        Времени на этап:
         <span {...use({ ml: true })}>
-          (до {formatedDate(currentStage.expectedCompletionTime)})
+          до {formatedDate(currentStage.expectedCompletionTime)}
         </span>
       </row>
       <row>
