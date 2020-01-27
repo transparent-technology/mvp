@@ -149,11 +149,6 @@ export const TasksId = ({ match, history }) => {
           </row>
         )}
       </taskheader>
-      <Documents
-        data={documents}
-        url={`/Tasks/${match.params.taskId}/Documents/`}
-        remoteDocument={deleteDocument}
-      />
 
       <Panel
         currentStage={currentStage}
@@ -161,6 +156,11 @@ export const TasksId = ({ match, history }) => {
         userStatus={userOperatingStatus}
         loadingPage={loading}
         url={pageUrl}
+      />
+      <Documents
+        data={documents}
+        url={`/Tasks/${match.params.taskId}/Documents/`}
+        remoteDocument={deleteDocument}
       />
       <grid>
         <div>
