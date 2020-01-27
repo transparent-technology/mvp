@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import styled, { css } from "reshadow/macro"
 
-import { formatedDate, transformDate } from "services/date"
+import { formatedDate } from "services/date"
 import { method } from "services/api"
 import { List, Icon } from "components"
 import { paper, grid, breadcrumbs } from "styles"
@@ -91,10 +91,7 @@ export const TasksId = ({ match, history }) => {
     creationTime
   })
 
-  const timer = useTimer({
-    deadline: currentStage ? currentStage.expectedCompletionTime : "",
-    finishTime: closingTime
-  })
+  const timer = useTimer({ currentStage })
 
   useEffect(() => {
     method.get(pageUrl).then(res => {
@@ -139,15 +136,7 @@ export const TasksId = ({ match, history }) => {
         <h1>{closingTime ? name : currentStage.name} </h1>
         {!closingTime && name}
         {timeline}
-        {!closingTime && (
-          <row>
-            <Icon type="timer" />
-            <span>Время на этап:</span>
-            <spantime>
-              {formatedDate(currentStage.expectedCompletionTime)}
-            </spantime>
-          </row>
-        )}
+        {timer}
       </taskheader>
 
       <Panel
