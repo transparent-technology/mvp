@@ -36,6 +36,7 @@ export const UserTemplate = ({ match, history }) => {
   const isCreate = match.params.userId === "create"
   const { state, dispatch } = useContext(CompanyPageContext)
   const [values, setValues] = useState(initialState)
+  // eslint-disable-next-line no-unused-vars
   const [userRoles, setUserRoles] = useState([])
   const [touched, setTouched] = useState(false)
   const [createData, setCreateData] = useState(null)

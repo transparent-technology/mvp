@@ -7,6 +7,7 @@ import { formatedDate } from "services/date"
 import { paper } from "styles"
 import { Icon, List } from "components"
 import { getIconProps } from "styles/helper"
+import { useTimer } from "hooks"
 
 const getUlr = (objectId, deviceId) => {
   if (deviceId) return `Tasks?GroupType=NotArchived&Take=3&DeviceId=${deviceId}`
@@ -60,6 +61,7 @@ const EvetListItem = ({
   onClick,
   currentStage = {}
 }) => {
+  const timer = useTimer({ currentStage })
   return styled`
     li {
       display: grid;
@@ -102,13 +104,7 @@ const EvetListItem = ({
   `(
     <li onClick={onClick}>
       <h4>{name}</h4>
-      <row>
-        <Icon type="timer" />
-        Время на этап:
-        <span {...use({ ml: true })}>
-          до {formatedDate(currentStage.expectedCompletionTime)}
-        </span>
-      </row>
+      <row>{timer}</row>
       <row>
         <span>
           <Icon type="calendar" />

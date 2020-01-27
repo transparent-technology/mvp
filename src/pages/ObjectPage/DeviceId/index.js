@@ -29,7 +29,7 @@ export const DeviceId = ({ match, location, history }) => {
 
   useEffect(() => {
     if (
-      (!device.id && hash === "") ||
+      (!device.lastCheckingDate && hash === "") ||
       (!devices && hash === "#Related") ||
       (!pipes && hash === "#CommunicationPipes")
     ) {
@@ -64,13 +64,13 @@ export const DeviceId = ({ match, location, history }) => {
         )}
         <span>{device && device.model}</span>
       </breadcrumbs>
-      {device ? (
+      {device.id ? (
         <h1>
           <Icon size={32} {...getIconProps(device.resource)} />
           {device.model} ({device.serialNumber})
         </h1>
       ) : (
-        "loading..."
+        <h1>Загрузка...</h1>
       )}
       <grid>
         <paper>

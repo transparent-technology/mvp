@@ -24,7 +24,6 @@ export const ChooseExecutorAndNotify = ({ push }) => {
     onChange: ids => setContractorsId(ids)
   })
 
-  console.log(contractorsIds)
   return styled`
   row {
     display: grid;

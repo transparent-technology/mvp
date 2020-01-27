@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import styled, { css } from "reshadow/macro"
@@ -83,7 +84,6 @@ export const TasksId = ({ match, history }) => {
     documents = [],
     device = {}
   } = state
-  console.log(currentStage)
 
   const timeline = useTimeline({
     expectedCompletionTime,

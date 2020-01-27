@@ -2,9 +2,9 @@ import React from "react"
 import styled, { use, css } from "reshadow/macro"
 import { useHistory } from "react-router-dom"
 
-import { useTimeline } from "hooks"
+import { useTimeline, useTimer } from "hooks"
 import { formatedDate } from "services/date"
-import { Icon, Device, Timeline } from "components"
+import { Icon, Device } from "components"
 
 export const TasksAllList = ({ items = [] }) => {
   const { push, location } = useHistory()
@@ -91,18 +91,10 @@ export const TasksAllListItem = ({
     closingTime
   })
 
+  const timer = useTimer({ currentStage })
+
   return styled(tasksItemStyle)(
     <listitem as="li" onClick={onClick}>
-      {/* {!closingTime ? (
-        timeline
-      ) : (
-        <row>
-          <rowitem>
-            <Icon type="ok" fill="#17B45A" />
-            Выполненно за 12д 14ч
-          </rowitem>
-        </row>
-      )} */}
       {timeline}
       <row>
         <h4>{currentStage ? currentStage.name : name}</h4>
@@ -110,11 +102,7 @@ export const TasksAllListItem = ({
       </row>
       {!closingTime && (
         <row>
-          <rowitem>
-            <Icon type="timer" />
-            Время на этап: до{" "}
-            {formatedDate(currentStage.expectedCompletionTime)}
-          </rowitem>
+          <rowitem>{timer}</rowitem>
           {hash === "#Observing" && (
             <rowitem>
               <Icon type="username" />

@@ -4,61 +4,39 @@ import { Icon } from "components"
 
 import { formatedDate, transformDate } from "services/date"
 
-export const useTimer = ({ deadline = null, finishTime = null } = {}) => {
-  if (!deadline && !finishTime) return <span>загрузка</span>
-  if (finishTime) {
-    return <span>загрузк...</span>
-  } else {
-    const diffInTime = new Date(deadline) - Date.now()
+export const useTimer = ({ currentStage }) => {
+  if (!currentStage) return null
+  const { closingTime, startingTime, expectedCompletionTime } = currentStage
+  const timeLimit = new Date(expectedCompletionTime) - Date.now()
 
-    if (diffInTime >> 0 > 0) {
-      return <span>ok</span>
-    } else {
-      return (
-        <Timer
-          timer={transformDate(diffInTime)}
-          text="Времени на этап:"
-          icon="timer"
-          deadline={formatedDate(deadline)}
-          expired
-        />
-      )
+  return styled`
+    timer {
+      display: flex;
+      align-items: center;
     }
-  }
-}
 
-const timerStyle = css`
-  wrapper {
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-
-    & > Icon {
+    Icon {
       margin-right: 8px;
     }
-  }
 
-  text {
-    margin-right: 4px;
-  }
-`
+    span {
+      margin-left: 8px;
+      color: ${timeLimit < 0 ? "#ED3B45" : "inherit"};
+    }
 
-const Timer = props => {
-  const { timer, text = "", icon = null, expired } = props
-  return styled(timerStyle)`
-    /* span {
-      color: red;
-    } */
-    finishspan {
-      color: rgba(39, 47, 90, 0.45);
+    deadline {
       margin-left: 4px;
+      color: rgba(39, 47, 90, 0.45);
     }
   `(
-    <wrapper>
-      {icon && <Icon type={icon} />}
-      {text && <text as="span">{text}</text>}
-      <span>{expired ? timer : timer}</span>
-      <finishspan as="span">(до {props.deadline})</finishspan>
-    </wrapper>
+    <timer>
+      <Icon type="timer" />
+      Время на этап:
+      <span>
+        {timeLimit < 0 && "-"}
+        {transformDate(timeLimit)}
+      </span>
+      <deadline as="span">(до {formatedDate(expectedCompletionTime)})</deadline>
+    </timer>
   )
 }
