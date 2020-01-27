@@ -1,9 +1,24 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import styled from "reshadow/macro"
 
+import { method } from "services/api"
 import { Icon } from "components"
 
-export const Documents = ({ data = [] }) => {
+export const Documents = ({ data = [], url, remoteDocument = () => {} }) => {
+  const [documentId, setDocumentId] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (documentId) {
+      setLoading(true)
+      method.delete(url + documentId).then(() => {
+        remoteDocument(documentId)
+        setLoading(false)
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [documentId])
+
   if (!data.length) return null
 
   return styled`
@@ -22,6 +37,7 @@ export const Documents = ({ data = [] }) => {
       align-items: center;
       display: inherit;
       grid-template-columns: 3fr 1fr 1fr;
+      position: relative;
     }
 
     div, a{
@@ -41,6 +57,19 @@ export const Documents = ({ data = [] }) => {
       margin-right: 8px;
     }
 
+    icon {
+      position: absolute;
+      top: 50%;
+      right: 24px;
+      transform: translateY(-50%);
+      margin: 2px;
+      cursor: pointer;
+      color: rgba(39, 47, 90, 0.65);
+
+      &:hover {
+        color: #ED3B45;
+      }
+    }
 
   `(
     <ul>
@@ -64,6 +93,11 @@ export const Documents = ({ data = [] }) => {
               minute: "numeric"
             })}
           </div>
+          {document.canBeEdited && (
+            <icon onClick={() => !loading && setDocumentId(document.id)}>
+              <Icon type="del" />
+            </icon>
+          )}
         </document>
       ))}
     </ul>

@@ -116,6 +116,11 @@ export const TasksId = ({ match, history }) => {
     setState(state => ({ ...state, ...data }))
   }
 
+  const deleteDocument = docId => {
+    const deletedList = documents.filter(item => item.id !== docId)
+    setState(state => ({ ...state, documents: deletedList }))
+  }
+
   return styled(
     paper,
     grid,
@@ -144,7 +149,11 @@ export const TasksId = ({ match, history }) => {
           </row>
         )}
       </taskheader>
-      <Documents data={state.documents} />
+      <Documents
+        data={documents}
+        url={`/Tasks/${match.params.taskId}/Documents/`}
+        remoteDocument={deleteDocument}
+      />
 
       <Panel
         currentStage={currentStage}
