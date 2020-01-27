@@ -54,7 +54,6 @@ export const useTimeline = ({
   const colorLine =
     percent < 50 ? "#17B45A" : percent < 80 ? "#FF8413" : "#FF2F13 "
   const time = new Date(closingTime) - new Date(creationTime)
-  console.log(time)
   const diffTime = new Date(expectedCompletionTime) - new Date(closingTime)
 
   if (closingTime) {

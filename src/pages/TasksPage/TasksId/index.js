@@ -14,6 +14,7 @@ import { CommentListItem } from "./CommentListItem"
 import { CommentCreator } from "./CommentCreator"
 import { Panel } from "./Panel"
 import { Stages } from "./Stages"
+import { Documents } from "./Documents"
 
 const getCurrentPage = (props = {}) => {
   if (props.closingTime) return "Архив"
@@ -79,6 +80,7 @@ export const TasksId = ({ match, history }) => {
     pushData,
     userOperatingStatus,
     comments = [],
+    documents = [],
     device = {}
   } = state
   console.log(currentStage)
@@ -135,13 +137,14 @@ export const TasksId = ({ match, history }) => {
         {!closingTime && (
           <row>
             <Icon type="timer" />
-            <span>Времени на этап:</span>
+            <span>Время на этап:</span>
             <spantime>
               {formatedDate(currentStage.expectedCompletionTime)}
             </spantime>
           </row>
         )}
       </taskheader>
+      <Documents data={state.documents} />
 
       <Panel
         currentStage={currentStage}

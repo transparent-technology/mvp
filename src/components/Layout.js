@@ -122,7 +122,7 @@ export const Layout = ({ children }) => {
         <logo>
           <img src={logo} alt="logo" />
           <span>
-            <b>TT</b> Managment
+            <b>TT</b> Management
           </span>
         </logo>
         <nav>

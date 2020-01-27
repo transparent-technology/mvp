@@ -104,7 +104,7 @@ const EvetListItem = ({
       <h4>{name}</h4>
       <row>
         <Icon type="timer" />
-        Времени на этап:
+        Время на этап:
         <span {...use({ ml: true })}>
           до {formatedDate(currentStage.expectedCompletionTime)}
         </span>
