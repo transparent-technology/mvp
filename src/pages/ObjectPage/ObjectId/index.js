@@ -46,7 +46,7 @@ export const ObjectId = ({ match, location, history }) => {
           {state.street}, {state.number}
         </h1>
       ) : (
-        "loading..."
+        <h1>Загрузка...</h1>
       )}
       <grid>
         <paper>
