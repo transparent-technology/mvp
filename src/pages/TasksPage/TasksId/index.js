@@ -16,6 +16,7 @@ import { CommentCreator } from "./CommentCreator"
 import { Panel } from "./Panel"
 import { Stages } from "./Stages"
 import { Documents } from "./Documents"
+import { Owner } from "./Owner"
 
 const getCurrentPage = (props = {}) => {
   if (props.closingTime) return "Архив"
@@ -181,6 +182,7 @@ export const TasksId = ({ match, history }) => {
             </paper>
           )}
 
+          <Owner />
           {/* info block */}
           <paper>
             <h3>Информация о задаче</h3>

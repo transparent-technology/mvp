@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react"
 import styled, { css } from "reshadow/macro"
 import { Icon } from "components"
