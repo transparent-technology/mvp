@@ -74,7 +74,7 @@ export const TasksAllListItem = ({
   address,
   perpetrator,
   currentStage = {},
-  checked,
+  checked = false,
   toggleCheck,
   hash
 }) => {
