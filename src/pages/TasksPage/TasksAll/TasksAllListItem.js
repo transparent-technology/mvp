@@ -4,25 +4,7 @@ import { useHistory } from "react-router-dom"
 
 import { useTimeline, useTimer } from "hooks"
 import { formatedDate } from "services/date"
-import { Icon, Device } from "components"
-
-export const TasksAllList = ({ items = [] }) => {
-  const { push, location } = useHistory()
-  if (!items.length) return "empty"
-  console.log("items", items)
-  return (
-    <ul>
-      {items.map(item => (
-        <TasksAllListItem
-          key={item.id}
-          onClick={() => push(`/tasks/${item.id}`, item)}
-          hash={location.hash}
-          {...item}
-        />
-      ))}
-    </ul>
-  )
-}
+import { Icon, Device, Checkbox } from "components"
 
 const tasksItemStyle = css`
   listitem {
@@ -70,6 +52,16 @@ const tasksItemStyle = css`
   h4 {
     font-weight: 500;
   }
+
+  rowtop {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    align-items: center;
+    grid-gap: 16px;
+    & *:nth-child(3) {
+      text-align: right;
+    }
+  }
 `
 
 export const TasksAllListItem = ({
@@ -82,9 +74,11 @@ export const TasksAllListItem = ({
   address,
   perpetrator,
   currentStage = {},
-  onClick,
+  checked,
+  toggleCheck,
   hash
 }) => {
+  const { push } = useHistory()
   const timeline = useTimeline({
     expectedCompletionTime,
     creationTime,
@@ -94,12 +88,15 @@ export const TasksAllListItem = ({
   const timer = useTimer({ currentStage })
 
   return styled(tasksItemStyle)(
-    <listitem as="li" onClick={onClick}>
+    <listitem as="li" onClick={() => push("/tasks/" + id)}>
       {timeline}
-      <row>
+      <rowtop>
+        {!closingTime && (
+          <Checkbox onChange={toggleCheck} checked={checked} stopPropagation />
+        )}
         <h4>{currentStage ? currentStage.name : name}</h4>
-        {!closingTime && name}
-      </row>
+        <span>{!closingTime && name}</span>
+      </rowtop>
       {!closingTime && (
         <row>
           <rowitem>{timer}</rowitem>

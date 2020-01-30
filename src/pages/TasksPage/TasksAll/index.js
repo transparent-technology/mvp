@@ -4,10 +4,11 @@ import styled, { use } from "reshadow/macro"
 
 import { method } from "services/api"
 import { paper, tabs } from "styles"
-import { Select as AntSelect, Input } from "antd"
+import { Select as AntSelect, Input, Button } from "antd"
 import { TasksAllListItem } from "./TasksAllListItem"
+import { TasksList } from "./TaskList"
 
-import { Icon, List } from "components"
+import { Icon, List, Checkbox } from "components"
 
 const { Option: AntOption } = AntSelect
 
@@ -23,6 +24,7 @@ const sortSelectItems = [
 export const TasksAll = ({ location, history }) => {
   const [loading, setLoading] = useState(false)
   const [state, setState] = useState({})
+  const [checkedTaskIds, setCheckedTaskIds] = useState([])
   const { executingTasksCount, observingTasksCount, items = [] } = state
   const { hash, pathname } = location
 
@@ -37,13 +39,38 @@ export const TasksAll = ({ location, history }) => {
     }
   }, [hash])
 
+  const handleCheckedGroup = checked => {
+    if (checked) {
+      setState({
+        ...state,
+        items: items.map(item => ({ ...item, checked: true }))
+      })
+      setCheckedTaskIds(items.map(item => item.id))
+    } else {
+      setState({
+        ...state,
+        items: items.map(item => ({ ...item, checked: false }))
+      })
+      setCheckedTaskIds([])
+    }
+  }
+
+  const toggleCheckItemList = (status, id) => {
+    setState({
+      ...state,
+      items: items.map(item =>
+        item.id === id ? { ...item, checked: status } : item
+      )
+    })
+  }
+
   if (!hash) return <Redirect to={{ pathname, hash: "Executing" }} />
   return styled(paper, tabs)`
     filter {
       display: grid;
       grid-template-columns: 1fr 1fr;
       align-items: center;
-      
+
       & > div {
         justify-self: end;
       }
@@ -61,6 +88,14 @@ export const TasksAll = ({ location, history }) => {
     Icon {
       margin-bottom: -4px;
       margin-right: 8px;
+    }
+
+    checked_group {
+      display: flex;
+      justify-self: start;
+      & > :first-child {
+        margin-right: 24px;
+      }
     }
   `(
     <>
@@ -104,17 +139,37 @@ export const TasksAll = ({ location, history }) => {
             </AntSelect>
           </div>
         </filter>
-        <List
+        <checked_group>
+          <Checkbox
+            text="Все задачи"
+            isChecked={handleCheckedGroup}
+            checked={checkedTaskIds.length}
+            groupDone={items.length !== checkedTaskIds.length}
+          />
+          <Button type="primary">Назначить</Button>
+        </checked_group>
+        <TasksList data={items} />
+        {/* <List
           loading={loading}
           data={items}
           renderItem={task => (
             <TasksAllListItem
               key={task.id}
               onClick={() => history.push("/tasks/" + task.id)}
+              onCheckItem={status => {
+                toggleCheckItemList(status, task.id)
+                if (status) {
+                  setCheckedTaskIds([...checkedTaskIds, task.id])
+                } else {
+                  setCheckedTaskIds(
+                    checkedTaskIds.filter(item => item !== task.id)
+                  )
+                }
+              }}
               {...task}
             />
           )}
-        />
+        /> */}
       </paper>
     </>
   )
