@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react"
 import styled, { css } from "reshadow/macro"
 
@@ -65,6 +66,8 @@ export const TasksList = ({ styles, data = [], hash }) => {
     title: "Назначение задачи"
   }
 
+  if (!data.length) return null
+
   return styled(styles)(
     <div>
       {hash !== "#Archived" && (
@@ -75,13 +78,11 @@ export const TasksList = ({ styles, data = [], hash }) => {
             allDone={tasks.length === checkedTaskIds.length}
             onChange={toggleGroupCheckbox}
           />
-          <Button
-            type="primary"
-            disabled={!isEmpty}
-            onClick={() => setShowModal(true)}
-          >
-            Назначить
-          </Button>
+          {isEmpty && (
+            <Button type="primary" onClick={() => setShowModal(true)}>
+              Назначить
+            </Button>
+          )}
         </top>
       )}
       <ul>
@@ -130,6 +131,7 @@ TasksList.defaultProps = {
       grid-auto-flow: column;
       justify-content: start;
       grid-gap: 24px;
+      min-height: 32px;
     }
 
     modal {

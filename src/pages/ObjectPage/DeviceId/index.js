@@ -27,6 +27,7 @@ export const DeviceId = ({ match, location, history }) => {
   const [state, setState] = useState({})
   const { device = {}, pipes, devices } = state
 
+  console.log(pipes)
   useEffect(() => {
     if (
       (!device.lastCheckingDate && hash === "") ||

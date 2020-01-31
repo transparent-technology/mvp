@@ -71,6 +71,7 @@ export const TasksId = ({ match, history }) => {
     pageUrl: `Tasks/${match.params.taskId}`
   })
 
+  console.log(state)
   const {
     creationTime,
     expectedCompletionTime,
@@ -83,7 +84,8 @@ export const TasksId = ({ match, history }) => {
     userOperatingStatus,
     comments = [],
     documents = [],
-    device = {}
+    device = {},
+    type
   } = state
 
   const timeline = useTimeline({
@@ -182,7 +184,7 @@ export const TasksId = ({ match, history }) => {
             </paper>
           )}
 
-          <Owner />
+          {type === " IndividualDeviceCheck" && <Owner />}
           {/* info block */}
           <paper>
             <h3>Информация о задаче</h3>

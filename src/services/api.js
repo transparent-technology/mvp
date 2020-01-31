@@ -43,6 +43,10 @@ method.interceptors.response.use(
           localStorage.setItem("refreshToken", JSON.stringify(refreshToken))
         })
         .then(() => method(err.config))
+        .catch(() => {
+          localStorage.clear()
+          window.location.replace("/login")
+        })
     }
     return Promise.reject(err)
   }

@@ -6,7 +6,8 @@ export const PipeListItem = ({
   entryNumber,
   hubNumber,
   material,
-  plotLength
+  plotLength,
+  magistral
 }) => {
   return styled`
     li {
@@ -31,7 +32,7 @@ export const PipeListItem = ({
       </li>
       <li>
         <span>Магистраль</span>
-        <span>{hubNumber}</span>
+        <span>{magistral === "FeedFlow" ? "Подающая" : "Обратная"}</span>
       </li>
     </>
   )
