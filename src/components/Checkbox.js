@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import styled, { css } from "reshadow/macro"
 
 const svgDone = (
@@ -39,8 +39,8 @@ export const Checkbox = ({
   onChange,
   stopPropagation,
   ...props
-}) => {
-  return styled(styles)`
+}) =>
+  styled(styles)`
     input:checked + div {
       background-color: #189ee9;
       border-color: #189ee9;
@@ -52,7 +52,6 @@ export const Checkbox = ({
       {text && <span>{text}</span>}
     </checkbox>
   )
-}
 
 Checkbox.defaultProps = {
   stopPropagation: false,

@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react"
 import styled, { css } from "reshadow/macro"
 
 import { Button, Modal } from "antd"
 import { TasksAllListItem } from "./TasksAllListItem"
-import { Checkbox, Icon, Radiobtn } from "components"
+import { Checkbox, Icon } from "components"
 const users = ["Иванов", "Петров", "Сидоров"]
 
 export const TasksList = ({ styles, data = [], hash }) => {
@@ -13,11 +14,15 @@ export const TasksList = ({ styles, data = [], hash }) => {
   const [showModal, setShowModal] = useState(false)
   const [executor, setExecutor] = useState("")
   const isEmpty = !!checkedTaskIds.length
+  const [mapList, setMapList] = useState(new Map())
 
   useEffect(() => {
+    const newMap = new Map(data.map(i => [i, false]))
     setTasks(data)
+    setMapList(newMap)
   }, [data])
 
+  console.log("map", mapList)
   useEffect(() => {
     setCheckedTaskIds([])
   }, [hash])
@@ -31,6 +36,7 @@ export const TasksList = ({ styles, data = [], hash }) => {
   }, [checkedTaskIds])
 
   const toggleCheck = (e, id) => {
+    setMapList(mapList.set(id, !mapList.get(id)))
     if (e.target.checked) {
       setTasks(
         tasks.map(item => (item.id === id ? { ...item, checked: true } : item))
@@ -85,13 +91,21 @@ export const TasksList = ({ styles, data = [], hash }) => {
         </top>
       )}
       <ul>
-        {tasks.map(item => (
+        {[...mapList.keys()].map(item => (
+          <TasksAllListItem
+            key={item.id}
+            toggleCheck={e => toggleCheck(e, item)}
+            {...item}
+            checked={mapList.get(item)}
+          />
+        ))}
+        {/* {tasks.map(item => (
           <TasksAllListItem
             key={item.id}
             toggleCheck={e => toggleCheck(e, item.id)}
             {...item}
           />
-        ))}
+        ))} */}
       </ul>
       <Modal {...modalProps}>
         <modal as="ul">
@@ -104,7 +118,7 @@ export const TasksList = ({ styles, data = [], hash }) => {
                 checked={user === executor}
                 onChange={() => setExecutor(user)}
               />
-              {/* <Radiobtn /> */}
+
               <fio>user</fio>
               <Icon type="task" />
               <taskcount>1234</taskcount>
